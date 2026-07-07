@@ -12,7 +12,7 @@ interface AuthContextType {
   error: string | null;
   clearError: () => void;
   loginWithEmail: (email: string, password: string) => Promise<void>;
-  signupWithEmail: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  signupWithEmail: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
   oauthLogin: (provider: OAuthProvider) => Promise<void>;
 }
@@ -74,14 +74,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [supabase]);
 
-  const signupWithEmail = useCallback(async (email: string, password: string, firstName: string, lastName: string) => {
+  const signupWithEmail = useCallback(async (email: string, password: string, fullName: string) => {
     setError(null);
-    if (!email || !password || !firstName || !lastName) {
-      setError('Please provide email, password, first name, and last name');
+    if (!email || !password || !fullName) {
+      setError('Please provide email, password, and full name');
       return;
     }
     try {
-      await authServiceSignUp(email, password, firstName, lastName);
+      await authServiceSignUp(email, password, fullName);
       // Refresh session after signup
       const { data: { session: currentSession } } = await supabase.auth.getSession();
       setSession(currentSession);

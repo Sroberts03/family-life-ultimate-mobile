@@ -14,15 +14,14 @@ import { useAuth } from "../AuthContext";
 
 export default function SignUpScreen() {
     const { signupWithEmail, error, clearError } = useAuth();
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
+    const [fullName, setFullName] = useState("");
+    const [email, setEmail] = useState(""); 
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const signupClicked = async () => {
         clearError();
-        await signupWithEmail(email, password, firstName, lastName);
+        await signupWithEmail(email, password, fullName);
     };
 
     const loginClicked = () => {
@@ -65,7 +64,7 @@ export default function SignUpScreen() {
                             {/* First Name */}
                             <View className="flex-1">
                                 <Text className="text-slate-600 text-sm font-medium mb-2 ml-1">
-                                    First Name
+                                    Full Name
                                 </Text>
                                 <TextInput
                                     className="
@@ -78,34 +77,10 @@ export default function SignUpScreen() {
                                         border
                                         border-gray-200
                                         "
-                                    placeholder="First"
+                                    placeholder="Full Name"
                                     placeholderTextColor="#9ca3af"
-                                    value={firstName}
-                                    onChangeText={setFirstName}
-                                    autoCorrect={false}
-                                />
-                            </View>
-                            
-                            {/* Last Name */}
-                            <View className="flex-1">
-                                <Text className="text-slate-600 text-sm font-medium mb-2 ml-1">
-                                    Last Name
-                                </Text>
-                                <TextInput
-                                    className="
-                                        bg-gray-100
-                                        text-slate-900
-                                        px-4
-                                        h-14
-                                        rounded-2xl
-                                        text-base
-                                        border
-                                        border-gray-200
-                                        "
-                                    placeholder="Last"
-                                    placeholderTextColor="#9ca3af"
-                                    value={lastName}
-                                    onChangeText={setLastName}
+                                    value={fullName}
+                                    onChangeText={setFullName}
                                     autoCorrect={false}
                                 />
                             </View>
