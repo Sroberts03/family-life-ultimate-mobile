@@ -11,19 +11,22 @@ import {
 import { router } from "expo-router";
 import { OAuthProvider } from "../auth.types";
 import { FontAwesome, Feather } from "@expo/vector-icons";
+import { useAuth } from "../AuthContext";
 
 export default function LoginScreen() {
+    const { loginWithEmail, oauthLogin, error, clearError } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const loginClicked = async (oAuthProvider?: OAuthProvider) => {
         if (oAuthProvider === "Google") {
-            alert("Google login not yet implemented");
+            await oauthLogin("Google");
         } else if (oAuthProvider === "Apple") {
-            alert("Apple login not yet implemented");
+            await oauthLogin("Apple");
         } else {
-            alert("Email login not yet implemented");
+            clearError();
+            await loginWithEmail(email, password);
         }
     };
 
@@ -32,6 +35,7 @@ export default function LoginScreen() {
     }
 
     const signupClicked = async () => {
+        clearError();
         router.push("/SignUp");
     };
 
@@ -99,7 +103,7 @@ export default function LoginScreen() {
                                 </Text>
                                 <TouchableOpacity onPress={forgotPasswordClicked} activeOpacity={0.7}>
                                     <Text className="text-indigo-500 text-sm font-medium">
-                                        Forgot?
+                                        Forgot Password?
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -135,6 +139,13 @@ export default function LoginScreen() {
                                 </TouchableOpacity>
                             </View>
                         </View>
+
+                        {/* Error Message */}
+                        {error && (
+                            <View className="mb-5 mt-3 items-center text-center justify-center">
+                                <Text className="text-red-500 text-base text-center">{error}</Text>
+                            </View>
+                        )}
 
                         {/* Sign In Button */}
                         <TouchableOpacity
