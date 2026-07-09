@@ -8,7 +8,7 @@ import { View } from "react-native";
 import { ActivityIndicator } from "react-native";
 
 function IntialLayout() {
-    const { session, error, loadingAuth } = useAuth();
+    const { session, error, loadingAuth, user } = useAuth();
 
     useEffect(() => {
         if (loadingAuth) return;
@@ -16,10 +16,18 @@ function IntialLayout() {
             console.log("No session");
             router.replace('/(auth)/Login');
         } else {
-            console.log("Session");
-            router.replace('/(tabs)/Home');
+            if (user?.requestedToJoinFam) {
+                console.log("Requested to join family");
+                router.replace('/(auth)/WaitForFamilyAcceptance');
+            } else if (!user?.hasAssociatedFamily) {
+                console.log("No family associated");
+                router.replace('/(auth)/FinishSignUp');
+            } else {
+                console.log("Session");
+                router.replace('/(tabs)/Home');
+            }
         }            
-    }, [session, loadingAuth]);
+    }, [session, loadingAuth, user]);
 
     if (loadingAuth) {
         return (

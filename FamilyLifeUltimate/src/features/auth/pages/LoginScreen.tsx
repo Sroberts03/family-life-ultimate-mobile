@@ -12,6 +12,7 @@ import { router } from "expo-router";
 import { OAuthProvider } from "../auth.types";
 import { FontAwesome, Feather } from "@expo/vector-icons";
 import { useAuth } from "../AuthContext";
+import GlobalErrorDisplay from "@/src/globalComponents/GlobalErrorDisplay";
 
 export default function LoginScreen() {
     const { loginWithEmail, oauthLogin, error, clearError } = useAuth();
@@ -141,11 +142,7 @@ export default function LoginScreen() {
                         </View>
 
                         {/* Error Message */}
-                        {error && (
-                            <View className="mb-5 mt-3 items-center text-center justify-center">
-                                <Text className="text-red-500 text-base text-center">{error}</Text>
-                            </View>
-                        )}
+                        {error && <GlobalErrorDisplay error={error} />}
 
                         {/* Sign In Button */}
                         <TouchableOpacity
