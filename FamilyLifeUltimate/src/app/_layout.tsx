@@ -16,7 +16,7 @@ function IntialLayout() {
             console.log("No session");
             router.replace('/(auth)/Login');
         } else {
-            if (user?.requestedToJoinFam) {
+            if (user?.requestedToJoinFam && !user?.hasAssociatedFamily) {
                 console.log("Requested to join family");
                 router.replace('/(auth)/WaitForFamilyAcceptance');
             } else if (!user?.hasAssociatedFamily) {

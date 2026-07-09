@@ -3,6 +3,7 @@ import { Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { OAuthProvider, User } from './auth.types';
 import { supabase } from '../../supabase/supabase';
 import { loginWithEmail as authServiceLogin, signUpWithEmail as authServiceSignUp, oauthLogin as authServiceOAuthLogin, signOut as authServiceSignOut } from './services/auth.service';
+import userData from './utils/userData';
 
 interface AuthContextType {
   user: User | null;
@@ -31,13 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
         if (currentSession?.user) {
-          const { data: familyData } = await supabase.from('user_families').select('*').eq('user_id', currentSession.user.id).single();
-          const { data: requestedFamilyData, error: requestedFamilyError } = await supabase.from('join_family_requests').select('*').eq('user_id', currentSession.user.id).single();
-          setUser({
-            ...currentSession.user,
-            hasAssociatedFamily: familyData?.family_id !== undefined,
-            requestedToJoinFam: requestedFamilyData?.family_id !== undefined
-          });
+          setUser(await userData(currentSession.user));
         } else {
           setUser(null);
         }
@@ -55,13 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async (_event: AuthChangeEvent, session: Session | null) => {
         setSession(session);
         if (session?.user) {
-          const { data: familyData } = await supabase.from('user_families').select('*').eq('user_id', session.user.id).single();
-          const { data: requestedFamilyData } = await supabase.from('join_family_requests').select('*').eq('user_id', session.user.id).single();
-          setUser({
-            ...session.user,
-            hasAssociatedFamily: familyData?.family_id !== undefined,
-            requestedToJoinFam: requestedFamilyData?.family_id !== undefined
-          });
+          setUser(await userData(session.user));
         } else {
           setUser(null);
         }
@@ -83,17 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       await authServiceLogin(email, password);
-      // Refresh session after login
       const { data: { session: currentSession } } = await supabase.auth.getSession();
       setSession(currentSession);
       if (currentSession?.user) {
-        const { data: familyData } = await supabase.from('user_families').select('*').eq('user_id', currentSession.user.id).single();
-        const { data: requestedFamilyData } = await supabase.from('join_family_requests').select('*').eq('user_id', currentSession.user.id).single();
-        setUser({
-          ...currentSession.user,
-          hasAssociatedFamily: familyData?.family_id !== undefined,
-          requestedToJoinFam: requestedFamilyData?.family_id !== undefined
-        });
+        setUser(await userData(currentSession.user));
       } else {
         setUser(null);
       }
@@ -116,13 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session: currentSession } } = await supabase.auth.getSession();
       setSession(currentSession);
       if (currentSession?.user) {
-        const { data: familyData } = await supabase.from('user_families').select('*').eq('user_id', currentSession.user.id).single();
-        const { data: requestedFamilyData, error: requestedFamilyError } = await supabase.from('join_family_requests').select('*').eq('user_id', currentSession.user.id).single();
-        setUser({
-          ...currentSession.user,
-          hasAssociatedFamily: familyData?.family_id !== undefined,
-          requestedToJoinFam: requestedFamilyData?.family_id !== undefined
-        });
+        setUser(await userData(currentSession.user));
       } else {
         setUser(null);
       }
@@ -141,13 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session: currentSession } } = await supabase.auth.getSession();
       setSession(currentSession);
       if (currentSession?.user) {
-        const { data: familyData } = await supabase.from('user_families').select('*').eq('user_id', currentSession.user.id).single();
-        const { data: requestedFamilyData } = await supabase.from('join_family_requests').select('*').eq('user_id', currentSession.user.id).single();
-        setUser({
-          ...currentSession.user,
-          hasAssociatedFamily: familyData?.family_id !== undefined,
-          requestedToJoinFam: requestedFamilyData?.family_id !== undefined
-        });
+        setUser(await userData(currentSession.user));
       } else {
         setUser(null);
       }
@@ -172,16 +142,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const finishSignUp = useCallback(async () => {
     setError(null);
     try {
+      setLoadingAuth(true)
       const { data: { session: currentSession } } = await supabase.auth.getSession();
       setSession(currentSession);
       if (currentSession?.user) {
-        const { data: familyData } = await supabase.from('user_families').select('*').eq('user_id', currentSession.user.id).single();
-        const { data: requestedFamilyData } = await supabase.from('join_family_requests').select('*').eq('user_id', currentSession.user.id).single();
-        setUser({
-          ...currentSession.user,
-          hasAssociatedFamily: familyData?.family_id !== undefined,
-          requestedToJoinFam: requestedFamilyData?.family_id !== undefined
-        });
+        setUser(await userData(currentSession.user));
       } else {
         setUser(null);
       }
@@ -189,6 +154,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const message = err instanceof Error ? err.message : 'Sign up failed';
       setError(message);
       throw err;
+    } finally {
+      setLoadingAuth(false)
     }
   }, []);
 

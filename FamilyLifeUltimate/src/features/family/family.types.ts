@@ -7,3 +7,26 @@ export const roles: { id: familyRole; title: string; description: string; icon: 
     { id: "child", title: "Child", description: "Join as a family member", icon: "smile" },
     { id: "other", title: "Other", description: "Extended family or guest", icon: "users" },
 ];
+
+export interface JoinRequest {
+    fullName: string;
+    requestId: number;
+    familyId: string;
+    userId: string;
+    role: familyRole;
+    createdAt: Date;
+};
+
+export interface family {
+    familyId: string;
+    ownerId: string;
+    subscription_level: string;
+    created_at: Date;
+    updated_at: Date;
+    family_name: string;
+};
+
+export interface TrucatedFamily {
+    familyId: string;
+    familyName: string;
+}

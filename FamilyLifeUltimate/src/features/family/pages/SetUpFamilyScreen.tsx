@@ -13,7 +13,7 @@ export default function SetUpFamilyScreen() {
     const [role, setRole] = useState<familyRole>("adult");
     const [ error, setError ] = useState<string | null>(null);
 
-    if (!session) return
+    if (!session) return;
 
     const submitClicked = async () => {
         setError(null);

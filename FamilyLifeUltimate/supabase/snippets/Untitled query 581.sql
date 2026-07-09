@@ -1,1 +1,2 @@
-GRANT SELECT ON public.join_family_requests TO authenticated;
+alter table join_family_requests
+add column accepted boolean default null
