@@ -48,7 +48,7 @@ function IntialLayout() {
 
 export default function RootLayout() {
     return (
-        <SafeAreaView className="flex-1 bg-gray-10">
+        <SafeAreaView className="flex-1 bg-background">
             <AuthProvider>
                 <IntialLayout />
             </AuthProvider>

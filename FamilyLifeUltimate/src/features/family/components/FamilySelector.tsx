@@ -8,10 +8,10 @@ interface FamilySelectorProps {
 }
 
 export default function FamilySelector({ possibleFamilies, familyId, setFamilyId }: FamilySelectorProps) {
-    if (possibleFamilies.length <= 1) return null;
+    if (possibleFamilies.length <= 1) return
 
     return (
-        <View className="mb-8">
+        <View className="mb-6">
             <Text className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 ml-1">
                 Select Family
             </Text>

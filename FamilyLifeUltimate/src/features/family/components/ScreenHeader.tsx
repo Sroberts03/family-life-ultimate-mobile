@@ -7,12 +7,12 @@ interface ScreenHeaderProps {
 
 export default function ScreenHeader({ title, subtitle }: ScreenHeaderProps) {
     return (
-        <View className="px-6 pt-6 pb-5 bg-white border-b border-gray-200">
-            <Text className="text-3xl font-bold text-slate-900 tracking-tight">
+        <View className="bg-background border-b border-gray-200">
+            <Text className="text-3xl font-bold text-text tracking-tight text-center">
                 {title}
             </Text>
             {subtitle && (
-                <Text className="text-base text-slate-500 mt-1">
+                <Text className="text-base text-text-muted mt-1 mb-5 text-center">
                     {subtitle}
                 </Text>
             )}

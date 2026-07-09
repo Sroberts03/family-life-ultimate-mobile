@@ -7,7 +7,7 @@ export default function WaitForFamilyAcceptanceScreen() {
     const { signOut } = useAuth();
 
     return (
-        <View className="flex-1 bg-gray-50">
+        <View className="flex-1 bg-background">
             <View className="flex-1 px-7 py-20">
                 {/* Decorative background accent */}
                 <View className="absolute top-0 left-0 right-0 h-72 bg-indigo-500 rounded-b-[80px] opacity-[0.07]" />

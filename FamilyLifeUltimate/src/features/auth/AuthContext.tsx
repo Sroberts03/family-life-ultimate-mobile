@@ -82,7 +82,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
       setError(message);
-      throw err;
     }
   }, [supabase]);
 
@@ -105,7 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed';
       setError(message);
-      throw err;
     }
   }, [supabase]);
 
@@ -124,7 +122,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign out failed';
       setError(message);
-      throw err;
     }
   }, [supabase]);
 
@@ -135,7 +132,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'OAuth login failed';
       setError(message);
-      throw err;
     }
   }, []);
 
@@ -153,7 +149,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed';
       setError(message);
-      throw err;
     } finally {
       setLoadingAuth(false)
     }

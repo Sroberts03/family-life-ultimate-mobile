@@ -21,7 +21,7 @@ export default function SignUpScreen() {
 
     return (
         <KeyboardAvoidingView
-            className="flex-1 bg-gray-50"
+            className="flex-1 bg-background"
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <ScrollView
@@ -34,9 +34,9 @@ export default function SignUpScreen() {
 
                     {/* Logo & Brand */}
                     <View className="mt-10">
-                        <AuthHeader 
-                            title="Join Family Life" 
-                            subtitle="Create your account" 
+                        <AuthHeader
+                            title="Join Family Life"
+                            subtitle="Create your account"
                         />
                     </View>
 

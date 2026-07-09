@@ -29,6 +29,34 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => <Ionicons name="home" size={28} color={color} />,
                 }}
              />
+             <Tabs.Screen
+                name="Calendar"
+                options={{
+                    title: "Calendar",
+                    tabBarIcon: ({ color }) => <Ionicons name="calendar" size={28} color={color} />,
+                }}
+             />
+             <Tabs.Screen
+                name="Budget"
+                options={{
+                    title: "Budget",
+                    tabBarIcon: ({ color }) => <Ionicons name="cash" size={28} color={color} />,
+                }}
+             />
+             <Tabs.Screen
+                name="Chore"
+                options={{
+                    title: "Chore",
+                    tabBarIcon: ({ color }) => <Ionicons name="list" size={28} color={color} />,
+                }}
+             />
+             <Tabs.Screen
+                name="Meals"
+                options={{
+                    title: "Meals",
+                    tabBarIcon: ({ color }) => <Ionicons name="fast-food" size={28} color={color} />,
+                }}
+             />
             <Tabs.Screen 
                 name="ManageJoinRequests"
                 options={{
