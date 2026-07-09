@@ -26,14 +26,14 @@ function IntialLayout() {
                 console.log("Session");
                 router.replace('/(tabs)/Home');
             }
-        }            
+        }
     }, [session, loadingAuth, user]);
 
     if (loadingAuth) {
         return (
-        <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#2563eb" />
-        </View>
+            <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size="large" color="#2563eb" />
+            </View>
         );
     }
 
@@ -48,7 +48,7 @@ function IntialLayout() {
 
 export default function RootLayout() {
     return (
-        <SafeAreaView className="flex-1 bg-gray-50">
+        <SafeAreaView className="flex-1 bg-gray-10">
             <AuthProvider>
                 <IntialLayout />
             </AuthProvider>
