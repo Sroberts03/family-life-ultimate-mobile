@@ -1,7 +1,10 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from "../../features/auth/AuthContext";
 
 export default function TabLayout() {
+    const { user } = useAuth();
+    
     return (
         <Tabs screenOptions= {{ 
             tabBarStyle: {
@@ -57,13 +60,14 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => <Ionicons name="fast-food" size={28} color={color} />,
                 }}
              />
-            <Tabs.Screen 
-                name="ManageJoinRequests"
-                options={{
-                    title: "Requests",
-                    tabBarIcon: ({ color }) => <Ionicons name="people" size={28} color={color} />,
-                }}
-             />
-        </Tabs>
-    )
-}
+             <Tabs.Screen 
+                 name="ManageJoinRequests"
+                 options={{
+                     title: "Requests",
+                     tabBarIcon: ({ color }) => <Ionicons name="people" size={28} color={color} />,
+                     href: user?.isAuthUser ? '/ManageJoinRequests' : null,
+                 }}
+              />
+         </Tabs>
+     )
+ }

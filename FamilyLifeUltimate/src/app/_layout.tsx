@@ -1,11 +1,15 @@
 import "../../global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "../features/auth/AuthContext";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import { useEffect } from "react";
-import { Stack } from "expo-router";
-import { View } from "react-native";
-import { ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
+import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 function IntialLayout() {
     const { session, error, loadingAuth, user } = useAuth();

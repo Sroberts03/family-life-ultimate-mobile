@@ -5,6 +5,7 @@ export type OAuthProvider = 'Google' | 'Apple';
 export interface User extends SupabaseUser {
     hasAssociatedFamily: boolean
     requestedToJoinFam: boolean
+    isAuthUser: boolean
 }
     
     

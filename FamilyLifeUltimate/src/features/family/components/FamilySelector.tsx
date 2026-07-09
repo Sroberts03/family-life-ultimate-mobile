@@ -8,7 +8,7 @@ interface FamilySelectorProps {
 }
 
 export default function FamilySelector({ possibleFamilies, familyId, setFamilyId }: FamilySelectorProps) {
-    if (possibleFamilies.length <= 1) return
+    if (possibleFamilies.length <= 1) return null;
 
     return (
         <View className="mb-6">
@@ -23,7 +23,7 @@ export default function FamilySelector({ possibleFamilies, familyId, setFamilyId
                             key={family.familyId}
                             onPress={() => setFamilyId(family.familyId)}
                             className={`px-5 py-2.5 rounded-full border mr-3 transition-all ${isSelected
-                                    ? 'bg-slate-900 border-slate-900 shadow-sm'
+                                    ? 'bg-slate-900 border-slate-900'
                                     : 'bg-white border-gray-200'
                                 }`}
                             activeOpacity={0.7}
