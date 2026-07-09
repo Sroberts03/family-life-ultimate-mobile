@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { getAllAuthFamilies, getAllJoinRequests, acceptOrDenyJoinRequest } from "../services/family.services";
 import { JoinRequest, TrucatedFamily } from "../family.types";
@@ -16,7 +16,8 @@ export default function ManageJoinRequestsScreen() {
     const [familyId, setFamilyId] = useState<string>("");
     const [possibleFamilies, setPossibleFamilies] = useState<TrucatedFamily[]>([]);
     const [error, setError] = useState<string>("");
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [showFamilyCode, setShowFamilyCode] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchAuthFamilies = async () => {
@@ -100,8 +101,20 @@ export default function ManageJoinRequestsScreen() {
                         ))
                     )}
                 </View>
-
-                <FamilyJoinCode familyId={familyId}/>
+                <View className="pb-8 pt-4">
+                    <TouchableOpacity 
+                        onPress={() => setShowFamilyCode(!showFamilyCode)} 
+                        className="bg-indigo-50 border border-indigo-100 px-5 py-4 flex-row items-center justify-center rounded-2xl mx-1"
+                        activeOpacity={0.7}
+                    >
+                        <Feather name={showFamilyCode ? "eye-off" : "eye"} size={18} color="#6366f1" />
+                        <Text className="text-primary font-semibold text-base ml-2">
+                            {showFamilyCode ? "Hide" : "Show"} Family Code
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                
+                {showFamilyCode && <FamilyJoinCode familyId={familyId}/>}
             </ScrollView>
         </View>
     );
