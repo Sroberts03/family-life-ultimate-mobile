@@ -1,9 +1,13 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from "../../features/auth/AuthContext";
+import userCanSeeScreen from "@/src/features/auth/utils/userCanSeeScreen";
 
 export default function TabLayout() {
     const { user } = useAuth();
+    if (user == null) {
+        return null;
+    }
     
     return (
         <Tabs screenOptions= {{ 
@@ -44,6 +48,7 @@ export default function TabLayout() {
                 options={{
                     title: "Budget",
                     tabBarIcon: ({ color }) => <Ionicons name="cash" size={28} color={color} />,
+                    href: userCanSeeScreen("Budget", user)  ? '/Budget' : null,
                 }}
              />
              <Tabs.Screen
@@ -65,7 +70,7 @@ export default function TabLayout() {
                  options={{
                      title: "Requests",
                      tabBarIcon: ({ color }) => <Ionicons name="people" size={28} color={color} />,
-                     href: user?.isAuthUser ? '/ManageJoinRequests' : null,
+                     href: userCanSeeScreen("ManageJoinRequests", user)  ? '/ManageJoinRequests' : null,
                  }}
               />
          </Tabs>
