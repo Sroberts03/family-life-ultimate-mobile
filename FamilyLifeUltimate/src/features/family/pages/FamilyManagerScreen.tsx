@@ -12,7 +12,6 @@ import { RelativePathString, router } from "expo-router";
 
 export default function FamilyManagerScreen() {
     const { session } = useAuth();
-    const [showFamilyCode, setShowFamilyCode] = useState<boolean>(false);
     const [possibleFamilies, setPossibleFamilies] = useState<TruncatedFamily[]>([]);
     const [familyId, setFamilyId] = useState<string>("");
     const [error, setError] = useState<string>("");
@@ -53,22 +52,8 @@ export default function FamilyManagerScreen() {
 
                     <ManagerButton title="Manage Join Requests" subtitle="Approve or decline join requests." onPress={() => manageButtonClicked('/ManageJoinRequests' as RelativePathString, { familyId: familyId })} icon="users" />
                     <ManagerButton title="Manage Family Rights" subtitle="Edit family rights." onPress={() => manageButtonClicked('/ManageFamilyRights' as RelativePathString, { familyId: familyId })} icon="feather" />
-
-
-                    <View className="pb-8 pt-4">
-                        <TouchableOpacity
-                            onPress={() => setShowFamilyCode(!showFamilyCode)}
-                            className="bg-indigo-50 border border-indigo-100 px-5 py-4 flex-row items-center justify-center rounded-2xl mx-1"
-                            activeOpacity={0.7}
-                        >
-                            <Feather name={showFamilyCode ? "eye-off" : "eye"} size={18} color="#6366f1" />
-                            <Text className="text-primary font-semibold text-base ml-2">
-                                {showFamilyCode ? "Hide" : "Show"} Family Code
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {showFamilyCode && <FamilyJoinCode familyId={familyId} />}
+                    
+                    <FamilyJoinCode familyId={familyId} />
                 </View>
             </ScrollView>
         </View>

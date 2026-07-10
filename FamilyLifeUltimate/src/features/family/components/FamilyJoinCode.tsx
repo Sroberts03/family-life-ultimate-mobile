@@ -17,7 +17,7 @@ export default function FamilyJoinCode({ familyId }: FamilyJoinCodeProps) {
     }
 
     return (
-        <View className="mt-4 mb-40 bg-surface rounded-3xl p-6 border border-gray-200 shadow-sm items-center mx-1">
+        <View className="mt-4 mb-40 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm items-center mx-1 shadow-sm">
             <View className="w-14 h-14 bg-indigo-50 rounded-full items-center justify-center mb-4 border border-indigo-100">
                 <Feather name="share-2" size={24} color="#6366f1" />
             </View>
