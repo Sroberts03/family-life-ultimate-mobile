@@ -7,16 +7,16 @@ export default function userCanSeeScreen(screen: string, user: User) {
         case "Calendar":
             return true;
         case "Budget":
-            return user.activities.some((activity) => activity.activityName === 'family_owner') 
-                || user.activities.some((activity) => activity.activityName === 'auth_family_user') 
+            return user.activities.some((activity) => activity.activityName === 'household_head') 
+                || user.activities.some((activity) => activity.activityName === 'authorized_user') 
                 || user.activities.some((activity) => activity.activityName === 'view_budget')
         case "Chore":
             return true;
         case "Meals":
             return true;
         case "Manage":
-            return user.activities.some((activity) => activity.activityName === 'family_owner') 
-                || user.activities.some((activity) => activity.activityName === 'auth_family_user');
+            return user.activities.some((activity) => activity.activityName === 'household_head') 
+                || user.activities.some((activity) => activity.activityName === 'authorized_user');
         default:
             return false;
     }

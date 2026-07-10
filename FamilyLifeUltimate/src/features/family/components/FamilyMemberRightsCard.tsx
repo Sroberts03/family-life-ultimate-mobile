@@ -11,6 +11,15 @@ interface FamilyMemberRightsCardProps {
 export default function FamilyMemberRightsCard({ member, isMe, onEditRights }: FamilyMemberRightsCardProps) {
     const initials = member.fullName.charAt(0).toUpperCase();
 
+    const formatActivity = (activityName: string) => {
+        if (activityName.includes('_')) {
+            const parts = activityName.split('_');
+            return parts[0].charAt(0).toUpperCase() + parts[0].slice(1) + ' ' + parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+        } else {
+            return activityName.charAt(0).toUpperCase() + activityName.slice(1);
+        }
+    }
+
     return (
         <View className="bg-white border border-gray-100 rounded-3xl p-5 mb-4 shadow-sm flex-row">
             {/* Avatar */}
@@ -50,7 +59,7 @@ export default function FamilyMemberRightsCard({ member, isMe, onEditRights }: F
                                     className="flex-row items-center bg-indigo-50/50 border border-indigo-100/60 px-3 py-1.5 rounded-full mr-2 mb-2"
                                 >
                                     <Feather name="check" size={14} color="#4f46e5" />
-                                    <Text className="text-xs text-indigo-700 ml-1.5 font-medium">{activity.activityName}</Text>
+                                    <Text className="text-xs text-indigo-700 ml-1.5 font-medium">{formatActivity(activity.activityName)}</Text>
                                 </View>
                             ))}
                         </View>
