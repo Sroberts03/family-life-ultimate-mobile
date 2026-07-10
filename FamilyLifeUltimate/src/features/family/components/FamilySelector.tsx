@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { TrucatedFamily } from "../family.types";
+import { TruncatedFamily } from "../family.types";
 
 interface FamilySelectorProps {
-    possibleFamilies: TrucatedFamily[];
+    possibleFamilies: TruncatedFamily[];
     familyId: string;
     setFamilyId: (id: string) => void;
 }
@@ -23,8 +23,8 @@ export default function FamilySelector({ possibleFamilies, familyId, setFamilyId
                             key={family.familyId}
                             onPress={() => setFamilyId(family.familyId)}
                             className={`px-5 py-2.5 rounded-full border mr-3 transition-all ${isSelected
-                                    ? 'bg-slate-900 border-slate-900'
-                                    : 'bg-white border-gray-200'
+                                ? 'bg-slate-900 border-slate-900'
+                                : 'bg-white border-gray-200'
                                 }`}
                             activeOpacity={0.7}
                         >

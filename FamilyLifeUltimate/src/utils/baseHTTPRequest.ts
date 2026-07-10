@@ -31,6 +31,6 @@ export default async function HTTPRequest(
         console.log(errorData.body.message);
         throw new Error(errorData.body.message);
     }
-
-    return response.json();
+    const res = await response.json();
+    return res;
 }

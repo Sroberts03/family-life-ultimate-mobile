@@ -7,13 +7,11 @@ export default async function userData(user: User) {
     await supabase.from('user_families')
       .select('*')
       .eq('user_id', user.id)
-      .maybeSingle();
   const { data: requestedFamilyData } = 
     await supabase.from('join_family_requests')
       .select('*')
       .eq('user_id', user.id)
       .is('accepted', null)
-      .maybeSingle();
   let userActivities: UserActivityRow[] = []
   const { data: userActivitiesData, error: userActivitiesError } =
     await supabase.from('pers_activities')
@@ -25,8 +23,8 @@ export default async function userData(user: User) {
   } else {
       userActivities = userActivitiesData as unknown as UserActivityRow[]
   }
-  const requestedToJoinFam = requestedFamilyData?.family_id !== undefined
-  const hasAssociatedFamily = familyData?.family_id !== undefined
+  const requestedToJoinFam = requestedFamilyData && requestedFamilyData.length > 0
+  const hasAssociatedFamily = familyData && familyData.length > 0
   return {
     ...user,
     hasAssociatedFamily: hasAssociatedFamily,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { getAllAuthFamilies, getAllJoinRequests, acceptOrDenyJoinRequest } from "../services/family.services";
-import { JoinRequest, TrucatedFamily } from "../family.types";
+import { JoinRequest, TruncatedFamily } from "../family.types";
 import { useAuth } from "../../auth/AuthContext";
 import ScreenHeader from "../components/ScreenHeader";
 import FamilySelector from "../components/FamilySelector";
@@ -14,7 +14,7 @@ type Props = {
     familyId: string;
 }
 
-export default function ManageJoinRequestsScreen({familyId}: Props) {
+export default function ManageJoinRequestsScreen({ familyId }: Props) {
     const { session } = useAuth();
     const [requests, setRequests] = useState<JoinRequest[]>([]);
     const [error, setError] = useState<string>("");
@@ -53,11 +53,11 @@ export default function ManageJoinRequestsScreen({familyId}: Props) {
 
     return (
         <View className="flex-1">
-            <ScreenHeader 
-                title="Requests" 
-                subtitle="Manage members joining your family." 
+            <ScreenHeader
+                title="Requests"
+                subtitle="Manage members joining your family."
             />
-            <BackButton 
+            <BackButton
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 
                 items-center justify-center transition-colors
@@ -79,10 +79,10 @@ export default function ManageJoinRequestsScreen({familyId}: Props) {
                         <EmptyRequestsState />
                     ) : (
                         requests.map((request) => (
-                            <JoinRequestCard 
-                                key={request.requestId} 
-                                request={request} 
-                                onAction={handleAction} 
+                            <JoinRequestCard
+                                key={request.requestId}
+                                request={request}
+                                onAction={handleAction}
                             />
                         ))
                     )}

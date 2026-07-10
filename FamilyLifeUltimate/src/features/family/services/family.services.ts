@@ -27,3 +27,8 @@ export async function acceptOrDenyJoinRequest(requestId: number, accept: boolean
         accept
     });
 }
+
+export async function GetFamilyMembers(familyId: string, session: Session) {
+    const response = await HTTPRequest("GET", `family/get-members?familyId=${familyId}`, true, session);
+    return response.members;
+}
