@@ -66,11 +66,11 @@ export default function TabLayout() {
                 }}
              />
              <Tabs.Screen 
-                 name="ManageJoinRequests"
+                 name="Manage"
                  options={{
-                     title: "Requests",
+                     title: "Manager",
                      tabBarIcon: ({ color }) => <Ionicons name="people" size={28} color={color} />,
-                     href: userCanSeeScreen("ManageJoinRequests", user)  ? '/ManageJoinRequests' : null,
+                     href: userCanSeeScreen("Manage", user)  ? '/Manage' : null,
                  }}
               />
          </Tabs>

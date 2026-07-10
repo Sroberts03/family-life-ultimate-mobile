@@ -8,32 +8,17 @@ import ScreenHeader from "../components/ScreenHeader";
 import FamilySelector from "../components/FamilySelector";
 import JoinRequestCard from "../components/JoinRequestCard";
 import EmptyRequestsState from "../components/EmptyRequestsState";
-import FamilyJoinCode from "../components/FamilyJoinCode";
+import BackButton from "../components/BackButton";
 
-export default function ManageJoinRequestsScreen() {
+type Props = {
+    familyId: string;
+}
+
+export default function ManageJoinRequestsScreen({familyId}: Props) {
     const { session } = useAuth();
     const [requests, setRequests] = useState<JoinRequest[]>([]);
-    const [familyId, setFamilyId] = useState<string>("");
-    const [possibleFamilies, setPossibleFamilies] = useState<TrucatedFamily[]>([]);
     const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [showFamilyCode, setShowFamilyCode] = useState<boolean>(false);
-
-    useEffect(() => {
-        const fetchAuthFamilies = async () => {
-            if (!session) return;
-            try {
-                const families = await getAllAuthFamilies(session);
-                setPossibleFamilies(families);
-                if (families.length > 0) {
-                    setFamilyId(families[0].familyId);
-                }
-            } catch (e) {
-                setError(e instanceof Error ? e.message : "Failed to get families");
-            }
-        };
-        fetchAuthFamilies();
-    }, []);
 
     useEffect(() => {
         const fetchJoinRequests = async () => {
@@ -72,6 +57,14 @@ export default function ManageJoinRequestsScreen() {
                 title="Requests" 
                 subtitle="Manage members joining your family." 
             />
+            <BackButton 
+                className="w-12 h-12 
+                bg-white border border-gray-100 rounded-full 
+                items-center justify-center transition-colors
+                absolute top-4 left-4 z-50
+                shadow-sm
+                "
+            />
 
             <ScrollView className="flex-1 px-6 pt-6 bg-background">
                 {error ? (
@@ -80,13 +73,6 @@ export default function ManageJoinRequestsScreen() {
                         <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
                     </View>
                 ) : null}
-
-                <FamilySelector 
-                    possibleFamilies={possibleFamilies} 
-                    familyId={familyId} 
-                    setFamilyId={setFamilyId} 
-                />
-                
 
                 <View className="pb-12">
                     {requests.length === 0 ? (
@@ -101,20 +87,6 @@ export default function ManageJoinRequestsScreen() {
                         ))
                     )}
                 </View>
-                <View className="pb-8 pt-4">
-                    <TouchableOpacity 
-                        onPress={() => setShowFamilyCode(!showFamilyCode)} 
-                        className="bg-indigo-50 border border-indigo-100 px-5 py-4 flex-row items-center justify-center rounded-2xl mx-1"
-                        activeOpacity={0.7}
-                    >
-                        <Feather name={showFamilyCode ? "eye-off" : "eye"} size={18} color="#6366f1" />
-                        <Text className="text-primary font-semibold text-base ml-2">
-                            {showFamilyCode ? "Hide" : "Show"} Family Code
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                
-                {showFamilyCode && <FamilyJoinCode familyId={familyId}/>}
             </ScrollView>
         </View>
     );

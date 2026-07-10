@@ -14,7 +14,7 @@ export default function userCanSeeScreen(screen: string, user: User) {
             return true;
         case "Meals":
             return true;
-        case "ManageJoinRequests":
+        case "Manage":
             return user.activities.some((activity) => activity.activityName === 'family_owner') 
                 || user.activities.some((activity) => activity.activityName === 'auth_family_user');
         default:
