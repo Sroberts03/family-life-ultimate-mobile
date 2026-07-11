@@ -1,16 +1,37 @@
 import { Modal, View, Text, TouchableOpacity, ScrollView, Switch } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { PersActivity } from "../../auth/auth.types";
+import { DetailedActivity } from "../../activities/types/DetailedActivity";
+import { useEffect, useState } from "react";
 
 interface props {
     visible: boolean;
     onClose: () => void;
     currentUserActivities: PersActivity[];
-    allActivities: any[];
+    allActivities: DetailedActivity[];
     familyMemberId: string;
     familyId: string;
+    onSave: (permissions: Record<number, boolean>, userId: string, familyId: string) => void;
 }
-export default function EditActivityModal({visible, onClose, currentUserActivities, allActivities, familyMemberId, familyId}: props) {
+
+export default function EditActivityModal({visible, onClose, currentUserActivities, allActivities, familyMemberId, familyId, onSave}: props) {
+    
+    const [permissions, setPermissions] = useState<Record<number, boolean>>({});
+    
+    useEffect(() => {
+        const initialPermissions: Record<number, boolean> = {};
+        currentUserActivities.forEach(activity => {
+            initialPermissions[activity.activityId] = true;
+        });
+        setPermissions(initialPermissions);
+    }, [currentUserActivities]);
+
+    const toggleActivity = (activityId: number) => {
+        setPermissions(prevPermissions => ({
+            ...prevPermissions,
+            [activityId]: !prevPermissions[activityId]
+        }));
+    }
     
     // Format activity name to be more readable
     const formatActivity = (activityName: string) => {
@@ -49,7 +70,7 @@ export default function EditActivityModal({visible, onClose, currentUserActiviti
                     {/* Content */}
                     <ScrollView className="max-h-96" contentContainerStyle={{ padding: 20 }}>
                         {allActivities && allActivities.map((activity, index) => {
-                            const isEnabled = currentUserActivities.some(a => a.activityName === activity.name);
+                            const isEnabled = !!permissions[activity.activityId];
                             return (
                                 <View 
                                     key={activity.activityId || index} 
@@ -67,7 +88,7 @@ export default function EditActivityModal({visible, onClose, currentUserActiviti
                                         trackColor={{ false: "#e2e8f0", true: "#818cf8" }}
                                         thumbColor={isEnabled ? "#4f46e5" : "#f8fafc"}
                                         ios_backgroundColor="#e2e8f0"
-                                        onValueChange={() => {}}
+                                        onValueChange={() => toggleActivity(activity.activityId)}
                                         value={isEnabled}
                                         style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }] }}
                                     />
@@ -86,6 +107,7 @@ export default function EditActivityModal({visible, onClose, currentUserActiviti
                         </TouchableOpacity>
                         <TouchableOpacity 
                             className="flex-1 py-3.5 rounded-xl bg-indigo-600 items-center justify-center shadow-sm"
+                            onPress={() => onSave(permissions, familyMemberId, familyId)}
                         >
                             <Text className="font-semibold text-white">Save Changes</Text>
                         </TouchableOpacity>

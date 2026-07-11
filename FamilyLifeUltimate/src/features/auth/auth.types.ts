@@ -9,6 +9,7 @@ export interface User extends SupabaseUser {
 }
 
 export interface PersActivity {
+    activityId: number
     activityName: string
     familyId: string
 }

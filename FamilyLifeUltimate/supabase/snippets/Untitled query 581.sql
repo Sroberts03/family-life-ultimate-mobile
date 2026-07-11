@@ -1,1 +1,1 @@
-GRANT SELECT ON public.activities TO authenticated;
+ALTER TABLE pers_activities ADD CONSTRAINT pers_activities_unique UNIQUE (user_id, family_id, activity_id);

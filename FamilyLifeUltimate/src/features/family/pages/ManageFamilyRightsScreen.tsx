@@ -7,10 +7,10 @@ import { useAuth } from "../../auth/AuthContext";
 import React, { useEffect, useState } from "react";
 import { FamilyMember } from "../family.types";
 import { Feather } from "@expo/vector-icons";
-import EditFamilyMemberRightsModal from "../components/EditActivityModal";
 import EditActivityModal from "../components/EditActivityModal";
+import { GetAllActivities, SetPermissions } from "../../activities/service/activities.service";
+import { DetailedActivity } from "../../activities/types/DetailedActivity";
 import { PersActivity } from "../../auth/auth.types";
-import { GetAllActivities } from "../../activities/service/activities.service";
 
 interface props {
     familyId: string;
@@ -21,7 +21,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [editRightsModal, setEditRightsModal] = useState<string | null>(null);
-    const [allActivities, setAllActivities] = useState<PersActivity[]>([]);
+    const [allActivities, setAllActivities] = useState<DetailedActivity[]>([]);
 
     if (!session) return null;
 
@@ -54,6 +54,37 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
         };
         fetchAllActivities();
     }, []);
+
+    const onSaveActivites = async (permissions: Record<number, boolean>, userId: string, familyId: string) => {
+        try {
+            setLoading(true)
+            await SetPermissions({permissions, userId, familyId}, session)
+            
+            const updatedActivities: PersActivity[] = allActivities
+                .filter(a => permissions[a.activityId])
+                .map(a => ({
+                    activityId: a.activityId,
+                    activityName: a.name,
+                    familyId: familyId
+                }));
+
+            setFamilyMembers(prev => prev.map(member => 
+                member.userId === userId ? { ...member, activities: updatedActivities } : member
+            ));
+            
+            setEditRightsModal(null);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to process request");
+        } finally {
+            setEditRightsModal(null);
+            setLoading(false)
+        }
+    }
+
+    const handleEditRightsPress = (userId: string) => {
+        setEditRightsModal(userId);
+        setError(null);
+    }
     
     return (
         <View className="flex-1 bg-background">
@@ -84,7 +115,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
                         key={member.userId}
                         member={member}
                         isMe={member.userId === user?.id}
-                        onEditRights={() => setEditRightsModal(member.userId)}
+                        onEditRights={() => handleEditRightsPress(member.userId)}
                     />
                 ))}
             </ScrollView>
@@ -96,6 +127,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
                     familyId={familyId}
                     currentUserActivities={familyMembers.filter(member => member.userId === editRightsModal)[0].activities || []}
                     allActivities={allActivities}
+                    onSave={onSaveActivites}
                 />
             ) : null}
         </View>

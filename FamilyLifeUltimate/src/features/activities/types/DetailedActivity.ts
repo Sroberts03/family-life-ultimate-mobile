@@ -1,5 +1,5 @@
 export interface DetailedActivity {
-    activityId: string;
+    activityId: number;
     name: string;
     description: string;
 }
