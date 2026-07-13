@@ -88,7 +88,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
     
     return (
         <View className="flex-1 bg-background">
-            <ScreenHeader title="Family Rights" subtitle="Manage permissions for your family members." />
+            <ScreenHeader title="Family Rights" subtitle="Manage permissions for your family." />
             {error ? (
                 <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
                     <Feather name="alert-circle" size={20} color="#b91c1c" />
@@ -105,7 +105,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 
                 items-center justify-center transition-colors
-                absolute top-1 left-4 z-50
+                absolute top-4 left-4 z-50
                 shadow-sm
                 "
             />

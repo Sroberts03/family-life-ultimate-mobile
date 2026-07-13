@@ -23,8 +23,8 @@ export default async function userData(user: User) {
   } else {
       userActivities = userActivitiesData as unknown as UserActivityRow[]
   }
-  const requestedToJoinFam = requestedFamilyData && requestedFamilyData.length > 0
-  const hasAssociatedFamily = familyData && familyData.length > 0
+  const requestedToJoinFam = Boolean(requestedFamilyData && requestedFamilyData.length > 0)
+  const hasAssociatedFamily = Boolean(familyData && familyData.length > 0)
   return {
     ...user,
     hasAssociatedFamily: hasAssociatedFamily,
