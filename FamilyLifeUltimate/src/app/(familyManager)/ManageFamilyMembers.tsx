@@ -1,9 +1,10 @@
-import { Text, View } from "react-native";
+import ManageFamilyMembersScreen from "@/src/features/family/pages/ManageFamilyMembersScreen"
+import { useLocalSearchParams } from "expo-router";
 
 export default function ManageFamilyMembers() {
+    const { familyId } = useLocalSearchParams<{ familyId: string }>();
+
     return (
-        <View className="flex-1 bg-background">
-            <Text>Manage Family Members</Text>
-        </View>
+        <ManageFamilyMembersScreen familyId={familyId} />
     )
 }

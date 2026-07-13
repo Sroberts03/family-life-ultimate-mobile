@@ -5,10 +5,11 @@ import { FamilyMember } from "../family.types";
 interface FamilyMemberRightsCardProps {
     member: FamilyMember;
     isMe: boolean;
-    onEditRights: (userId: string) => void;
+    onEditRights?: (userId: string) => void;
+    onRemoveMember?: (userId: string) => void;
 }
 
-export default function FamilyMemberRightsCard({ member, isMe, onEditRights }: FamilyMemberRightsCardProps) {
+export default function FamilyMemberRightsCard({ member, isMe, onEditRights, onRemoveMember }: FamilyMemberRightsCardProps) {
     const initials = member.fullName.charAt(0).toUpperCase();
 
     const formatActivity = (activityName: string) => {
@@ -32,18 +33,32 @@ export default function FamilyMemberRightsCard({ member, isMe, onEditRights }: F
                 <View className="flex-row items-center justify-between mb-1">
                     <View className="flex-row items-center flex-1 pr-2">
                         <Text className="text-lg font-bold text-slate-900 mr-2" numberOfLines={1}>{member.fullName}</Text>
-                        {isMe && (
-                            <View className="bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">
-                                <Text className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">You</Text>
-                            </View>
-                        )}
+                        
                     </View>
                     <View className="bg-slate-50 border border-slate-100 px-2 py-1 rounded-md">
                         <Text className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{member.role}</Text>
                     </View>
                 </View>
 
+                {isMe && (
+                    <View className="flex-row items-center flex-1 pr-2">
+                        <View/>
+                        <View className="bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">
+                            <Text className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">You</Text>
+                        </View>
+                    </View>
+                )}
+                {member.activities.some((activity) => activity.activityName == "household_head") && (
+                    <View className="flex-row items-center flex-1 pr-2">
+                        <View/>
+                        <View className="bg-green-50 border border-green-100 px-2 py-0.5 rounded-md">
+                            <Text className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Head of Household</Text>
+                        </View>
+                    </View>
+                )}
+
                 {/* Permissions/Activities */}
+                {onEditRights && (
                 <View className="mt-4 pt-4 border-t border-gray-50">
                     <View className="flex-row items-center justify-between mb-3">
                         <Text className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Permissions</Text>
@@ -67,6 +82,17 @@ export default function FamilyMemberRightsCard({ member, isMe, onEditRights }: F
                         <Text className="text-sm text-slate-500 italic">No specific permissions</Text>
                     )}
                 </View>
+                )}
+
+                {/* Remove Member */}
+                {onRemoveMember && !isMe && !member.activities.some((activity) => activity.activityName == "household_head") && (
+                    <View className="flex-row items-center justify-between mb-3">
+                        <View/>
+                        <TouchableOpacity onPress={() => onRemoveMember(member.userId)} className="px-6 py-2 mt-4 bg-red-100 border border-red-200 rounded-full">
+                            <Text className="text-red-500">Remove</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
         </View>
     );

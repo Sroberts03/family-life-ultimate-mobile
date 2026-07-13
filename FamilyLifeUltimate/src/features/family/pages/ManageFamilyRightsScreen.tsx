@@ -1,7 +1,6 @@
 import { ScrollView, View, Text, ActivityIndicator } from "react-native";
 import ScreenHeader from "../components/ScreenHeader";
 import BackButton from "../components/BackButton";
-import FamilyMemberRightsCard from "../components/FamilyMemberRightsCard";
 import { GetFamilyMembers } from "../services/family.services";
 import { useAuth } from "../../auth/AuthContext";
 import React, { useEffect, useState } from "react";
@@ -11,11 +10,12 @@ import EditActivityModal from "../components/EditActivityModal";
 import { GetAllActivities, SetPermissions } from "../../activities/service/activities.service";
 import { DetailedActivity } from "../../activities/types/DetailedActivity";
 import { PersActivity } from "../../auth/auth.types";
+import FamilyMemberCard from "../components/FamilyMemberCard";
 
 interface props {
     familyId: string;
 }
-export default function ManageFamilyRightsScreen({familyId}: props) {
+export default function ManageFamilyRightsScreen({ familyId }: props) {
     const { session, user } = useAuth();
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -58,8 +58,8 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
     const onSaveActivites = async (permissions: Record<number, boolean>, userId: string, familyId: string) => {
         try {
             setLoading(true)
-            await SetPermissions({permissions, userId, familyId}, session)
-            
+            await SetPermissions({ permissions, userId, familyId }, session)
+
             const updatedActivities: PersActivity[] = allActivities
                 .filter(a => permissions[a.activityId])
                 .map(a => ({
@@ -68,10 +68,10 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
                     familyId: familyId
                 }));
 
-            setFamilyMembers(prev => prev.map(member => 
+            setFamilyMembers(prev => prev.map(member =>
                 member.userId === userId ? { ...member, activities: updatedActivities } : member
             ));
-            
+
             setEditRightsModal(null);
         } catch (e) {
             setError(e instanceof Error ? e.message : "Failed to process request");
@@ -85,7 +85,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
         setEditRightsModal(userId);
         setError(null);
     }
-    
+
     return (
         <View className="flex-1 bg-background">
             <ScreenHeader title="Family Rights" subtitle="Manage permissions for your family." />
@@ -96,12 +96,12 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
                 </View>
             ) : null}
             {loading ? (
-                <ActivityIndicator 
+                <ActivityIndicator
                     size="large"
                     color="#0000ff"
                 />
             ) : null}
-            <BackButton 
+            <BackButton
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 
                 items-center justify-center transition-colors
@@ -111,7 +111,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
             />
             <ScrollView className="flex-1 px-5 pt-6 pb-12">
                 {familyMembers.map((member) => (
-                    <FamilyMemberRightsCard 
+                    <FamilyMemberCard
                         key={member.userId}
                         member={member}
                         isMe={member.userId === user?.id}
@@ -120,7 +120,7 @@ export default function ManageFamilyRightsScreen({familyId}: props) {
                 ))}
             </ScrollView>
             {editRightsModal ? (
-                <EditActivityModal 
+                <EditActivityModal
                     visible={!!editRightsModal}
                     onClose={() => setEditRightsModal(null)}
                     familyMemberId={editRightsModal!}
