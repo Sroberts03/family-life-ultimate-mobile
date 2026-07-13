@@ -1,5 +1,4 @@
 import { Feather } from "@expo/vector-icons";
-import { PersActivity } from "../auth/auth.types";
 
 export type familyRole = "adult" | "child" | "other"
 
@@ -30,6 +29,11 @@ export interface family {
 export interface TruncatedFamily {
     familyId: string;
     familyName: string;
+}
+
+export interface PersActivity {
+    familyId: string;
+    activity: string;
 }
 
 export interface FamilyMember {

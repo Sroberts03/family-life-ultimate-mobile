@@ -5,13 +5,7 @@ export type OAuthProvider = 'Google' | 'Apple';
 export interface User extends SupabaseUser {
     hasAssociatedFamily: boolean
     requestedToJoinFam: boolean
-    activities: PersActivity[]
-}
-
-export interface PersActivity {
-    activityId: number
-    activityName: string
-    familyId: string
+    activities: Map<string, Set<string>>
 }
     
     

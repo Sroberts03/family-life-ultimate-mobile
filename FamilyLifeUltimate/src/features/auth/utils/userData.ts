@@ -1,6 +1,6 @@
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../../../supabase/supabase';
-import createRoleObjects, { UserActivityRow } from './createRoles';
+import createRoleObject, { UserActivityRow } from './createRoles';
 
 export default async function userData(user: User) {
   const { data: familyData } = 
@@ -29,6 +29,6 @@ export default async function userData(user: User) {
     ...user,
     hasAssociatedFamily: hasAssociatedFamily,
     requestedToJoinFam: requestedToJoinFam,
-    activities: createRoleObjects(userActivities)
+    activities: createRoleObject(userActivities)
   };
 }

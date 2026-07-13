@@ -2,19 +2,21 @@ import { User } from "../auth.types";
 
 export default function userCanSeeScreen(screen: string, user: User) {
     if (!user.activities) return false
-    
-    const userPermissions = new Set(user.activities.map(act => act.activityName));
 
-    const isHouseholdHead = userPermissions.has('household_head');
-    const isAuthorizedUser = userPermissions.has('authorized_user');
+    for (const userAct of user.activities.values()) {
+        if (userAct.has('household_head')) return true
+    }
 
-    if (isHouseholdHead) return true
+    for (const userAct of user.activities.values()) {
+        if (userAct.has('authorized_user')) return true
+    }
     
     switch (screen) {
         case "Budget":
-            return isAuthorizedUser || userPermissions.has('view_budget')
-        case "Manage":
-            return isAuthorizedUser
+            for (const userAct of user.activities.values()) {
+                if (userAct.has('edit_budget')) return true
+                if (userAct.has('view_budget')) return true
+            }
         default:
             return false;
     }

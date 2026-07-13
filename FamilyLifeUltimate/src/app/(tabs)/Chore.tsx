@@ -1,9 +1,7 @@
-import { Text, View } from "react-native";
+import MainChoreScreen from "../../features/chore/pages/MainChoreScreen";
 
 export default function Chore() {
     return (
-        <View>
-            <Text>Chore</Text>
-        </View>
+        <MainChoreScreen />
     )
 }

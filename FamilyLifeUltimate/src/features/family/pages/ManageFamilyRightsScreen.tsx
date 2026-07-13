@@ -9,7 +9,6 @@ import { Feather } from "@expo/vector-icons";
 import EditActivityModal from "../components/EditActivityModal";
 import { GetAllActivities, SetPermissions } from "../../activities/service/activities.service";
 import { DetailedActivity } from "../../activities/types/DetailedActivity";
-import { PersActivity } from "../../auth/auth.types";
 import FamilyMemberCard from "../components/FamilyMemberCard";
 
 interface props {
@@ -60,7 +59,7 @@ export default function ManageFamilyRightsScreen({ familyId }: props) {
             setLoading(true)
             await SetPermissions({ permissions, userId, familyId }, session)
 
-            const updatedActivities: PersActivity[] = allActivities
+            const updatedActivities = allActivities
                 .filter(a => permissions[a.activityId])
                 .map(a => ({
                     activityId: a.activityId,
