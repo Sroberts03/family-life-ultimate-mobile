@@ -1,4 +1,21 @@
-insert into user_chore (chore_id, user_id)
-values (1, '0e5b51f8-5c87-4ff5-827e-b7bc24e149f4');
-insert into user_chore (chore_id, user_id)
-values (1, '4de24cab-c6c8-40c5-93ea-98f0e4bb87b8');
+SELECT 
+                    c.id,
+                    ct.name,
+                    ct.description,
+                    c.due_date,
+                    c.date_completed,
+                    array_agg(uc.user_id) as assignee_ids,
+                    array_agg(a.raw_user_meta_data->>'display_name') as assignee_names
+                FROM 
+                    chores as c
+                JOIN chore_templates as ct on c.chore_id = ct.id
+                JOIN user_chore uc on c.id = uc.chore_id
+                JOIN auth.users as a ON uc.user_id = a.id
+                WHERE ct.family_id = 'dbdb7f47-8ac3-4724-a2b1-75cddaea970d'
+                AND c.due_date = '07-13-2026'
+                GROUP BY 
+                    c.id,
+                    ct.name,
+                    ct.description,
+                    c.due_date,
+                    c.date_completed;

@@ -37,3 +37,8 @@ export async function GetFamilyMembers(familyId: string, session: Session) {
 export async function RemoveFamilyMember(removeFamilyMemberRequest: RemoveFamilyMemberRequestDto, session: Session) {
     await HTTPRequest("DELETE", "family/remove-member?familyId=" + removeFamilyMemberRequest.familyId + "&userId=" + removeFamilyMemberRequest.userId, true, session);
 }
+
+export async function getAllFamilies(session: Session) {
+    const response = await HTTPRequest("GET", "family/get-all-families", true, session);
+    return response.families;
+}

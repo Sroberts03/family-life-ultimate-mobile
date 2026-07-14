@@ -6,9 +6,10 @@ interface ChoreCardProps {
     chore: Chore;
     userCanEdit: boolean;
     onPress: (action: "edit" | "delete", chore: Chore) => void;
+    markComplete: (choreId: number) => void;
 }
 
-export default function ChoreCard({ chore, userCanEdit, onPress }: ChoreCardProps) {
+export default function ChoreCard({ chore, userCanEdit, onPress, markComplete }: ChoreCardProps) {
     const isCompleted = !!chore.dateCompleted;
 
     return (
@@ -20,11 +21,14 @@ export default function ChoreCard({ chore, userCanEdit, onPress }: ChoreCardProp
                         <Text className="text-sm text-gray-500 mt-1 leading-5">{chore.description}</Text>
                     ) : null}
                 </View>
-                <View className={`px-3 py-1 rounded-full ${isCompleted ? 'bg-green-100' : 'bg-orange-100'}`}>
+                <TouchableOpacity
+                    className={`px-3 py-1 rounded-full ${isCompleted ? 'bg-green-100' : 'bg-orange-100'}`}
+                    onPress={() => markComplete(chore.id)}
+                >
                     <Text className={`text-xs font-semibold ${isCompleted ? 'text-green-700' : 'text-orange-700'}`}>
                         {isCompleted ? 'Completed' : 'Pending'}
                     </Text>
-                </View>
+                </TouchableOpacity>
             </View>
 
             <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-100">
