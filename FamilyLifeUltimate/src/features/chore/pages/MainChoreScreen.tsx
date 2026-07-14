@@ -1,8 +1,8 @@
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { useEffect, useState } from "react";
-import { TruncatedFamily } from "../../family/family.types";
+import { FamilyMember, TruncatedFamily } from "../../family/family.types";
 import { useAuth } from "../../auth/AuthContext";
-import { getAllFamilies } from "../../family/services/family.services";
+import { getAllFamilies, GetFamilyMembers } from "../../family/services/family.services";
 import FamilySelector from "../../family/components/FamilySelector";
 import { Chore } from "../chore.types";
 import ChoreCard from "../components/ChoreCard";
@@ -14,6 +14,8 @@ import AddButton from "../components/AddButton";
 import CreateChoreModal from "../components/CreateChoreModal";
 import { ChoreDataDto } from "../dto/ChoreDataDto";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import { months } from "../../calendar/utils/MonthRecord";
+import ChoreAssignment from "../components/ChoreAssignment";
 
 export function toLocalDateString(date: Date): string {
     const year = date.getFullYear();
@@ -34,21 +36,9 @@ export default function MainChoreScreen() {
     const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
     const [editingChore, setEditingChore] = useState<Chore | null>(null);
     const [deletingChore, setDeletingChore] = useState<Chore | null>(null);
-
-    const months: Record<number, string> = {
-        0: "January",
-        1: "February",
-        2: "March",
-        3: "April",
-        4: "May",
-        5: "June",
-        6: "July",
-        7: "August",
-        8: "September",
-        9: "October",
-        10: "November",
-        11: "December"
-    }
+    const [asigneeWindowVisible, setAsigneeWindowVisible] = useState<boolean>(false);
+    const [choreAssigneeIds, setChoreAssigneeIds] = useState<Set<string>>(new Set());
+    const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
 
     useEffect(() => {
             const fetchAuthFamilies = async () => {
@@ -87,6 +77,24 @@ export default function MainChoreScreen() {
         fetchChoresForFamily();
     }, [familyId, date])
 
+    useEffect(() => {
+        const fetchFamilyMembers = async () => {
+            if (!session || !familyId) return;
+            if (!userCanEdit()) return;
+            try {
+                setError("");
+                setLoading(true);
+                const familyMembers = await GetFamilyMembers(familyId, session);
+                setFamilyMembers(familyMembers);
+            } catch (e) {
+                setError(e instanceof Error ? e.message : "Failed to get family members");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFamilyMembers();
+    }, [familyId])
+
     if (!session || !user ) return null;
 
     const userCanEdit = () => {
@@ -102,7 +110,6 @@ export default function MainChoreScreen() {
             setEditingChore(chore);
         } else if (action === "delete") {
             setDeletingChore(chore);
-            console.log("deleteingchore", deletingChore);
         }
     }
 
@@ -154,6 +161,23 @@ export default function MainChoreScreen() {
         }
     }
 
+    const submitChoreAssignment = async (choreId: number, choreAssigneeIds: Set<string>) => {
+        if (!session || !choreId) return null;
+        try {
+            setError("");
+            setLoading(true);
+            const chore = await submitChoreAssignments(choreId, choreAssigneeIds, session);
+            const updatedChores = { ...chores };
+            updatedChores[choreId] = chore;
+            setChores(updatedChores);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to submit chore assignments");
+        } finally {
+            setLoading(false);
+            setAsigneeWindowVisible(false);
+        }
+    }
+
     const todayPressed = () => {
         const now = new Date();
         setToday(now);
@@ -187,7 +211,15 @@ export default function MainChoreScreen() {
                     />
                 ) : null}
                 {Object.values(chores).map((chore) => (
-                    <ChoreCard chore={chore} key={chore.id} userCanEdit={userCanEdit()} onPress={onPress} markComplete={markComplete}/>
+                    <ChoreCard 
+                        chore={chore} 
+                        key={chore.id} 
+                        userCanEdit={userCanEdit()} 
+                        onPress={onPress} 
+                        markComplete={markComplete} 
+                        setAsigneeWindowVisible={setAsigneeWindowVisible}
+                        setChoreAssigneeIds={setChoreAssigneeIds}
+                    />
                 ))}
                 {Object.values(chores).length === 0 && (
                     <View className="flex-1 items-center justify-center mt-10">
@@ -202,10 +234,11 @@ export default function MainChoreScreen() {
                 onPress={todayPressed}
             />
             {userCanEdit() && (
-            <AddButton
-                containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
-                onPress={() => setCreateModalVisible(true)} 
-            />)}
+                <AddButton
+                    containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
+                    onPress={() => setCreateModalVisible(true)} 
+                />
+            )}
             <CreateChoreModal
                 visible={createModalVisible}
                 onClose={() => setCreateModalVisible(false)}
@@ -219,6 +252,15 @@ export default function MainChoreScreen() {
                     chore={deletingChore}
                 />
             )}
+            <ChoreAssignment
+                visible={asigneeWindowVisible}
+                onClose={() => setAsigneeWindowVisible(false)}
+                onSubmit={submitChoreAssignment}
+                choreId={editingChore?.id || 0}
+                familyMembers={familyMembers}
+                choreAssigneeIds={choreAssigneeIds}
+            />
+
         </View>
     );
 }

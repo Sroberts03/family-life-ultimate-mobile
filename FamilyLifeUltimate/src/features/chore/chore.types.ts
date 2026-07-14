@@ -5,6 +5,6 @@ export interface Chore {
     description?: string;
     dueDate: Date;
     dateCompleted?: Date;
-    assigneeIds?: string[];
+    assigneeIds?: Set<string>;
     assigneeNames?: string[];
 }
