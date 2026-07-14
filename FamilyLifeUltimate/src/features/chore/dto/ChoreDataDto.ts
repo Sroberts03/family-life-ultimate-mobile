@@ -1,4 +1,5 @@
 export interface ChoreDataDto {
+    choreId?: number;
     familyId: string;
     name: string;
     description: string;

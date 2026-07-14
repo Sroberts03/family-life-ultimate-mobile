@@ -17,3 +17,13 @@ export async function createChore(chore: ChoreDataDto, session: Session) {
     const response = await HTTPRequest("POST", `chores/create`, true, session, chore);
     return response.chore;
 }
+
+export async function updateChore(choreDataDto: ChoreDataDto, session: Session) {
+    const response = await HTTPRequest("PUT", `chores/update`, true, session, choreDataDto);
+    return response.chore;
+}
+
+export async function deleteChore(choreId: number, session: Session, thisAndFuture: boolean = false) {
+    const response = await HTTPRequest("DELETE", `chores/delete?choreId=${choreId}&thisAndFuture=${thisAndFuture}`, true, session);
+    return response;
+}

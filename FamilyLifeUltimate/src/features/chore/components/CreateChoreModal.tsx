@@ -19,6 +19,13 @@ interface Props {
     visible: boolean;
     onClose: () => void;
     onSubmit: (name: string, description: string, recurring: string, startDate: string, endDate: string) => void;
+    choreName?: string;
+    choreDescription?: string;
+    choreRecurring?: string;
+    choreStartDate?: string;
+    choreEndDate?: string;
+    choreId?: number;
+    isUpdate?: boolean;
 }
 
 function choreDataValidation (name: string, description: string, recurring: string, startDate: string, endDate: string) {
@@ -67,22 +74,22 @@ const RECURRING_OPTIONS = [
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default function CreateChoreModal({ visible, onClose, onSubmit }: Props) {
-    const [name, setName] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
+export default function CreateChoreModal({ visible, onClose, onSubmit, choreName, choreDescription, choreRecurring, choreStartDate, choreEndDate, choreId, isUpdate }: Props) {
+    const [name, setName] = useState<string>(choreName || "");
+    const [description, setDescription] = useState<string>(choreDescription || "");
     
     // Dates
-    const [startDate, setStartDate] = useState<string>(toLocalDateString(new Date()));
-    const [endDate, setEndDate] = useState<string>("");
+    const [startDate, setStartDate] = useState<string>(choreStartDate || toLocalDateString(new Date()));
+    const [endDate, setEndDate] = useState<string>(choreEndDate || "");
     const [activeDatePicker, setActiveDatePicker] = useState<"start" | "end" | null>(null);
     
     // Recurring
-    const [recurring, setRecurringState] = useState<string>("D");
-    const [days, setDays] = useState<string[]>([]);
-    const [monthDayStr, setMonthDayStr] = useState<string>("1");
-    const [monthlyType, setMonthlyType] = useState<"date" | "day">("date");
-    const [monthlyOrdinal, setMonthlyOrdinal] = useState<number>(1);
-    const [monthlyDay, setMonthlyDay] = useState<string>("Sun");
+    const [recurring, setRecurringState] = useState<string>(choreRecurring || "D");
+    const [days, setDays] = useState<string[]>(choreRecurring?.split(":")[1].split(",") || []);
+    const [monthDayStr, setMonthDayStr] = useState<string>(choreRecurring?.split(":")[1] || "1");
+    const [monthlyType, setMonthlyType] = useState<"date" | "day">(choreRecurring?.split(":")[1]?.includes(",") ? "day" : "date");
+    const [monthlyOrdinal, setMonthlyOrdinal] = useState<number>(parseInt(choreRecurring?.split(":")[1]?.split(",")[0] || "1"));
+    const [monthlyDay, setMonthlyDay] = useState<string>(choreRecurring?.split(":")[1]?.split(",")[1] || "Sun");
     const [error, setError] = useState<string>("");
 
     const resetForm = () => {

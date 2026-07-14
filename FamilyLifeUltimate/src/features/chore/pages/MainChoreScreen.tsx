@@ -6,13 +6,14 @@ import { getAllFamilies } from "../../family/services/family.services";
 import FamilySelector from "../../family/components/FamilySelector";
 import { Chore } from "../chore.types";
 import ChoreCard from "../components/ChoreCard";
-import { getAllChoresForFamily, markChoreComplete, createChore } from "../services/chore.services";
+import { getAllChoresForFamily, markChoreComplete, createChore, deleteChore } from "../services/chore.services";
 import DayList from "../../calendar/components/DayList";
 import TodayButton from "../components/TodayButton";
 import { Feather } from "@expo/vector-icons";
 import AddButton from "../components/AddButton";
 import CreateChoreModal from "../components/CreateChoreModal";
 import { ChoreDataDto } from "../dto/ChoreDataDto";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
 export function toLocalDateString(date: Date): string {
     const year = date.getFullYear();
@@ -31,8 +32,10 @@ export default function MainChoreScreen() {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
+    const [editingChore, setEditingChore] = useState<Chore | null>(null);
+    const [deletingChore, setDeletingChore] = useState<Chore | null>(null);
 
-     useEffect(() => {
+    useEffect(() => {
             const fetchAuthFamilies = async () => {
                 if (!session) return;
                 try {
@@ -80,7 +83,29 @@ export default function MainChoreScreen() {
     }
 
     const onPress = (action: "edit" | "delete", chore: Chore) => {
-        console.log(action, chore);
+        if (action === "edit") {
+            setEditingChore(chore);
+        } else if (action === "delete") {
+            setDeletingChore(chore);
+            console.log("deleteingchore", deletingChore);
+        }
+    }
+
+    const deleteChoreSubmit = async (choreId: number, thisAndFuture: boolean = false) => {
+        if (!session || !familyId) return null;
+        try {
+            setError("");
+            setLoading(true);
+            await deleteChore(choreId, session, thisAndFuture);
+            const updatedChores = { ...chores };
+            delete updatedChores[choreId];
+            setChores(updatedChores);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to delete chore");
+        } finally {
+            setLoading(false);
+            setDeletingChore(null);
+        }
     }
 
     const markComplete = async (choreId: number) => {
@@ -168,6 +193,14 @@ export default function MainChoreScreen() {
                 onClose={() => setCreateModalVisible(false)}
                 onSubmit={createChoreSubmit} 
             />
+            {deletingChore && (
+                <ConfirmDeleteModal
+                    visible={true}
+                    onClose={() => setDeletingChore(null)}
+                    onSubmit={deleteChoreSubmit}
+                    chore={deletingChore}
+                />
+            )}
         </View>
     );
 }
