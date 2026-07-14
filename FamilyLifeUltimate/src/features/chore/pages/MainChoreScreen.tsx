@@ -2,16 +2,19 @@ import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { useEffect, useState } from "react";
 import { TruncatedFamily } from "../../family/family.types";
 import { useAuth } from "../../auth/AuthContext";
-import { getAllAuthFamilies, getAllFamilies } from "../../family/services/family.services";
+import { getAllFamilies } from "../../family/services/family.services";
 import FamilySelector from "../../family/components/FamilySelector";
 import { Chore } from "../chore.types";
 import ChoreCard from "../components/ChoreCard";
-import { getAllChoresForFamily, markChoreComplete } from "../services/chore.services";
+import { getAllChoresForFamily, markChoreComplete, createChore } from "../services/chore.services";
 import DayList from "../../calendar/components/DayList";
 import TodayButton from "../components/TodayButton";
 import { Feather } from "@expo/vector-icons";
+import AddButton from "../components/AddButton";
+import CreateChoreModal from "../components/CreateChoreModal";
+import { ChoreDataDto } from "../dto/ChoreDataDto";
 
-function toLocalDateString(date: Date): string {
+export function toLocalDateString(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -24,9 +27,10 @@ export default function MainChoreScreen() {
     const [date, setDate] = useState<Date>(new Date());
     const [possibleFamilies, setPossibleFamilies] = useState<TruncatedFamily[]>([]);
     const [familyId, setFamilyId] = useState<string>("");
-    const [ chores, setChores ] = useState<Record<number, Chore>>({});
+    const [chores, setChores] = useState<Record<number, Chore>>({});
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
 
      useEffect(() => {
             const fetchAuthFamilies = async () => {
@@ -52,6 +56,7 @@ export default function MainChoreScreen() {
         const fetchChoresForFamily = async () => {
             if (!session || !familyId) return;
             try {
+                setError("");
                 setLoading(true);
                 const chores = await getAllChoresForFamily(familyId, toLocalDateString(date), session);
                 setChores(chores);
@@ -90,6 +95,22 @@ export default function MainChoreScreen() {
             }
         } catch (e) {
             setError(e instanceof Error ? e.message : "Failed to mark chore complete");
+        }
+    }
+
+    const createChoreSubmit = async (name: string, description: string, recurring: string, startDate: string, endDate: string) => {
+        if (!session || !familyId) return null;
+        try {
+            setError("");
+            setLoading(true);
+            const chore = await createChore({familyId, name, description, recurring, startDate, endDate}, session);
+            if (startDate == toLocalDateString(date)) {
+                setChores({...chores, [chore.id]: chore});
+            }
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to create chore");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -132,10 +153,20 @@ export default function MainChoreScreen() {
                 )}
             </ScrollView>
             <TodayButton
-                buttonClassname="bg-white rounded-full absolute bottom-28 left-4 w-20 h-12 flex items-center justify-center border border-gray-100"
+                buttonClassname="bg-white rounded-full absolute bottom-28 left-4 w-20 h-12 flex items-center justify-center border border-gray-100 shadow shadow-sm"
                 textClassname="text-text"
                 visible={date.toDateString() !== today.toDateString()} 
                 onPress={todayPressed}
+            />
+            {userCanEdit() && (
+            <AddButton
+                containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
+                onPress={() => setCreateModalVisible(true)} 
+            />)}
+            <CreateChoreModal
+                visible={createModalVisible}
+                onClose={() => setCreateModalVisible(false)}
+                onSubmit={createChoreSubmit} 
             />
         </View>
     );

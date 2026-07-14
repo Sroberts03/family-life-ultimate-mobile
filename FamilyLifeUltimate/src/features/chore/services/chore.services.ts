@@ -1,6 +1,7 @@
 import { Session } from "@supabase/supabase-js";
 import HTTPRequest from "../../../utils/baseHTTPRequest";
 import { MarkChoreCompleteDto } from "../dto/MarkChoreCompleteDto";
+import { ChoreDataDto } from "../dto/ChoreDataDto";
 
 export async function getAllChoresForFamily(familyId: string, date: string, session: Session) {
     const response = await HTTPRequest("GET", `chores/get-all-chores-date?familyId=${familyId}&date=${date}`, true, session);
@@ -10,4 +11,9 @@ export async function getAllChoresForFamily(familyId: string, date: string, sess
 export async function markChoreComplete(markChoreCompleteDto: MarkChoreCompleteDto, session: Session) {
     const response = await HTTPRequest("PUT", `chores/mark-chore-complete`, true, session, markChoreCompleteDto);
     return response;
+}
+
+export async function createChore(chore: ChoreDataDto, session: Session) {
+    const response = await HTTPRequest("POST", `chores/create`, true, session, chore);
+    return response.chore;
 }
