@@ -6,7 +6,7 @@ import { getAllFamilies, GetFamilyMembers } from "../../family/services/family.s
 import FamilySelector from "../../family/components/FamilySelector";
 import { Chore } from "../chore.types";
 import ChoreCard from "../components/ChoreCard";
-import { getAllChoresForFamily, markChoreComplete, createChore, deleteChore } from "../services/chore.services";
+import { getAllChoresForFamily, markChoreComplete, createChore, deleteChore, submitChoreAssignments } from "../services/chore.services";
 import DayList from "../../calendar/components/DayList";
 import TodayButton from "../components/TodayButton";
 import { Feather } from "@expo/vector-icons";
@@ -39,6 +39,7 @@ export default function MainChoreScreen() {
     const [asigneeWindowVisible, setAsigneeWindowVisible] = useState<boolean>(false);
     const [choreAssigneeIds, setChoreAssigneeIds] = useState<Set<string>>(new Set());
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+    const [choreGettingAssignees, setChoreGettingAssignees] = useState<number | null>(null);
 
     useEffect(() => {
             const fetchAuthFamilies = async () => {
@@ -47,7 +48,6 @@ export default function MainChoreScreen() {
                     setLoading(true);
                     const families = await getAllFamilies(session);
                     setPossibleFamilies(families);
-                    console.log("families", families);
                     if (families.length > 0) {
                         setFamilyId(families[0].familyId);
                     }
@@ -162,11 +162,13 @@ export default function MainChoreScreen() {
     }
 
     const submitChoreAssignment = async (choreId: number, choreAssigneeIds: Set<string>) => {
+        console.log("HERE")
         if (!session || !choreId) return null;
+        console.log("HERE 2")
         try {
             setError("");
             setLoading(true);
-            const chore = await submitChoreAssignments(choreId, choreAssigneeIds, session);
+            const chore = await submitChoreAssignments({choreId, choreAssigneeIds}, session);
             const updatedChores = { ...chores };
             updatedChores[choreId] = chore;
             setChores(updatedChores);
@@ -219,6 +221,7 @@ export default function MainChoreScreen() {
                         markComplete={markComplete} 
                         setAsigneeWindowVisible={setAsigneeWindowVisible}
                         setChoreAssigneeIds={setChoreAssigneeIds}
+                        setChoreGettingAssignees={setChoreGettingAssignees}
                     />
                 ))}
                 {Object.values(chores).length === 0 && (
@@ -256,7 +259,7 @@ export default function MainChoreScreen() {
                 visible={asigneeWindowVisible}
                 onClose={() => setAsigneeWindowVisible(false)}
                 onSubmit={submitChoreAssignment}
-                choreId={editingChore?.id || 0}
+                choreId={choreGettingAssignees ?? 0}
                 familyMembers={familyMembers}
                 choreAssigneeIds={choreAssigneeIds}
             />

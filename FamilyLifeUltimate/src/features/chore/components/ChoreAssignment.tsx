@@ -33,6 +33,7 @@ export default function ChoreAssignment({ visible, choreAssigneeIds, familyMembe
 
     const handleSave = () => {
         onSubmit(choreId, selectedIds);
+        onClose()
     };
 
     const getInitials = (name: string) => {

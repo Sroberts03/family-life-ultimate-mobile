@@ -9,9 +9,10 @@ interface ChoreCardProps {
     markComplete: (choreId: number) => void;
     setAsigneeWindowVisible: (visible: boolean) => void;
     setChoreAssigneeIds: (choreAsigneeIds: Set<string>) => void;
+    setChoreGettingAssignees: (choreGettingAssignees: number | null) => void;
 }
 
-export default function ChoreCard({ chore, userCanEdit, onPress, markComplete, setAsigneeWindowVisible, setChoreAssigneeIds }: ChoreCardProps) {
+export default function ChoreCard({ chore, userCanEdit, onPress, markComplete, setAsigneeWindowVisible, setChoreAssigneeIds, setChoreGettingAssignees }: ChoreCardProps) {
     const isCompleted = !!chore.dateCompleted;
 
     return (
@@ -39,6 +40,7 @@ export default function ChoreCard({ chore, userCanEdit, onPress, markComplete, s
                     <TouchableOpacity onPress={() => {
                         setAsigneeWindowVisible(true)
                         setChoreAssigneeIds(chore.assigneeIds || new Set<string>());
+                        setChoreGettingAssignees(chore.id);
                     }}>
                         <Text className="text-sm text-gray-600 ml-2" numberOfLines={1}>
                             {chore.assigneeNames && chore.assigneeNames.length > 0
