@@ -1,4 +1,4 @@
 export interface MarkChoreCompleteDto {
     choreId: number;
-    dateCompleted: Date;
+    dateCompleted: Date | null;
 }

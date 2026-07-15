@@ -9,7 +9,7 @@ export async function getAllChoresForFamily(familyId: string, date: string, sess
     return response.chores;
 }
 
-export async function markChoreComplete(markChoreCompleteDto: MarkChoreCompleteDto, session: Session) {
+export async function toggleChoreComplete(markChoreCompleteDto: MarkChoreCompleteDto, session: Session) {
     const response = await HTTPRequest("PUT", `chores/mark-chore-complete`, true, session, markChoreCompleteDto);
     return response;
 }

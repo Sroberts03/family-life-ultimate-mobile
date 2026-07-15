@@ -6,7 +6,7 @@ interface ChoreCardProps {
     chore: Chore;
     userCanEdit: boolean;
     onPress: (action: "edit" | "delete", chore: Chore) => void;
-    markComplete: (choreId: number) => void;
+    markComplete: (choreId: number, changeToNotComplete: boolean) => void;
     setAsigneeWindowVisible: (visible: boolean) => void;
     setChoreAssigneeIds: (choreAsigneeIds: Set<string>) => void;
     setChoreGettingAssignees: (choreGettingAssignees: number | null) => void;
@@ -26,7 +26,7 @@ export default function ChoreCard({ chore, userCanEdit, onPress, markComplete, s
                 </View>
                 <TouchableOpacity
                     className={`px-3 py-1 rounded-full ${isCompleted ? 'bg-green-100' : 'bg-orange-100'}`}
-                    onPress={() => markComplete(chore.id)}
+                    onPress={() => markComplete(chore.id, isCompleted ? true : false)}
                 >
                     <Text className={`text-xs font-semibold ${isCompleted ? 'text-green-700' : 'text-orange-700'}`}>
                         {isCompleted ? 'Completed' : 'Pending'}

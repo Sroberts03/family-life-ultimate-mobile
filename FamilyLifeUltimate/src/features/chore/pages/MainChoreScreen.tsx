@@ -6,7 +6,7 @@ import { getAllFamilies, GetFamilyMembers } from "../../family/services/family.s
 import FamilySelector from "../../family/components/FamilySelector";
 import { Chore } from "../chore.types";
 import ChoreCard from "../components/ChoreCard";
-import { getAllChoresForFamily, markChoreComplete, createChore, deleteChore, submitChoreAssignments } from "../services/chore.services";
+import { getAllChoresForFamily, toggleChoreComplete, createChore, deleteChore, submitChoreAssignments } from "../services/chore.services";
 import DayList from "../../calendar/components/DayList";
 import TodayButton from "../components/TodayButton";
 import { Feather } from "@expo/vector-icons";
@@ -130,14 +130,14 @@ export default function MainChoreScreen() {
         }
     }
 
-    const markComplete = async (choreId: number) => {
+    const markComplete = async (choreId: number, changeToNotComplete: boolean = false) => {
         const now = new Date();
         if (!choreId) return null;
         try {
-            await markChoreComplete({choreId, dateCompleted: now}, session);
+            await toggleChoreComplete({choreId, dateCompleted: changeToNotComplete ? null : now}, session);
             const chore = chores[choreId];
             if (chore) {
-                chore.dateCompleted = now;
+                chore.dateCompleted = changeToNotComplete ? undefined : now;
                 setChores({...chores, [choreId]: chore});
             }
         } catch (e) {
