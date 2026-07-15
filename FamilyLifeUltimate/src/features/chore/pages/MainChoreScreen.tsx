@@ -6,7 +6,7 @@ import { getAllFamilies, GetFamilyMembers } from "../../family/services/family.s
 import FamilySelector from "../../family/components/FamilySelector";
 import { Chore } from "../chore.types";
 import ChoreCard from "../components/ChoreCard";
-import { getAllChoresForFamily, toggleChoreComplete, createChore, deleteChore, submitChoreAssignments } from "../services/chore.services";
+import { getAllChoresForFamily, toggleChoreComplete, createChore, deleteChore, submitChoreAssignments, GetChoreInfo, updateChore } from "../services/chore.services";
 import DayList from "../../calendar/components/DayList";
 import TodayButton from "../components/TodayButton";
 import { Feather } from "@expo/vector-icons";
@@ -34,7 +34,8 @@ export default function MainChoreScreen() {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
-    const [editingChore, setEditingChore] = useState<Chore | null>(null);
+    const [editingChore, setEditingChore] = useState<number | null>(null);
+    const [editingChoreInfo, setEditingChoreInfo] = useState<ChoreDataDto | null>(null);
     const [deletingChore, setDeletingChore] = useState<Chore | null>(null);
     const [asigneeWindowVisible, setAsigneeWindowVisible] = useState<boolean>(false);
     const [choreAssigneeIds, setChoreAssigneeIds] = useState<Set<string>>(new Set());
@@ -95,6 +96,24 @@ export default function MainChoreScreen() {
         fetchFamilyMembers();
     }, [familyId])
 
+    useEffect(() => {
+        const getEditChoreInfo = async () => {
+            if (!session || !editingChore) return;
+            if (!userCanEdit()) return;
+            try {
+                setError("");
+                setLoading(true);
+                const choreInfo = await GetChoreInfo(editingChore, session);
+                setEditingChoreInfo(choreInfo);
+            } catch (e) {
+                setError(e instanceof Error ? e.message : "Failed to get chore assignees");
+            } finally {
+                setLoading(false);
+            }
+        };
+        getEditChoreInfo();
+    }, [editingChore])
+
     if (!session || !user ) return null;
 
     const userCanEdit = () => {
@@ -107,7 +126,7 @@ export default function MainChoreScreen() {
 
     const onPress = (action: "edit" | "delete", chore: Chore) => {
         if (action === "edit") {
-            setEditingChore(chore);
+            setEditingChore(chore.id);
         } else if (action === "delete") {
             setDeletingChore(chore);
         }
@@ -127,6 +146,23 @@ export default function MainChoreScreen() {
         } finally {
             setLoading(false);
             setDeletingChore(null);
+        }
+    }
+
+    const updateChoreSubmit = async (choreId: number, name: string, description: string, recurring: string, startDate: string, endDate: string) => {
+        if (!session || !choreId) return null;
+        try {
+            setError("");
+            setLoading(true);
+            console.log(choreId, name, description, recurring, startDate, endDate)
+            const chore = await updateChore({choreId, familyId, name, description, recurring, startDate, endDate}, session);
+            const updatedChores = { ...chores };
+            updatedChores[choreId] = chore;
+            setChores(updatedChores);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to update chore");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -246,6 +282,18 @@ export default function MainChoreScreen() {
                 visible={createModalVisible}
                 onClose={() => setCreateModalVisible(false)}
                 onSubmit={createChoreSubmit} 
+            />
+            <CreateChoreModal 
+                visible={!!editingChore}
+                onClose={() => setEditingChore(null)}
+                onUpdate={updateChoreSubmit} 
+                choreName={editingChoreInfo?.name}
+                choreDescription={editingChoreInfo?.description}
+                choreRecurring={editingChoreInfo?.recurring}
+                choreStartDate={editingChoreInfo?.startDate}
+                choreEndDate={editingChoreInfo?.endDate}
+                choreId={!editingChore ? 0: editingChore}
+                isUpdate={true}
             />
             {deletingChore && (
                 <ConfirmDeleteModal

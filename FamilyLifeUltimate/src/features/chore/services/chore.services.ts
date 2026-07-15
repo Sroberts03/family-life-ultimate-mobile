@@ -38,3 +38,8 @@ export async function submitChoreAssignments(choreAssigneeDto: ChoreAssigneeDto,
     const response = await HTTPRequest("PUT", `chores/update-chore-assignees`, true, session, payload);
     return response.chore;
 }
+
+export async function GetChoreInfo(choreId: number, session: Session) {
+    const response = await HTTPRequest("GET", `chores/get-chore-info?choreId=${choreId}`, true, session);
+    return response.chore;
+}

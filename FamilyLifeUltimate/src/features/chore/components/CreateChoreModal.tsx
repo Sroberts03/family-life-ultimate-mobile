@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
     View, 
     Text, 
@@ -18,7 +18,8 @@ import { toLocalDateString } from "../pages/MainChoreScreen";
 interface Props {
     visible: boolean;
     onClose: () => void;
-    onSubmit: (name: string, description: string, recurring: string, startDate: string, endDate: string) => void;
+    onSubmit?: (name: string, description: string, recurring: string, startDate: string, endDate: string) => void;
+    onUpdate?: (choreId: number, name: string, description: string, recurring: string, startDate: string, endDate: string) => void;
     choreName?: string;
     choreDescription?: string;
     choreRecurring?: string;
@@ -64,6 +65,35 @@ function setRecurring(recurring: string, days?: string[], monthDay?: number) {
     }
 }
 
+function parseChoreRecurring(choreRecurring?: string) {
+    let recurring = "D";
+    let days: string[] = [];
+    let monthDayStr = "1";
+    let monthlyType: "date" | "day" = "date";
+    let monthlyOrdinal = 1;
+    let monthlyDay = "Sun";
+
+    if (!choreRecurring) return { recurring, days, monthDayStr, monthlyType, monthlyOrdinal, monthlyDay };
+
+    const parts = choreRecurring.split(":");
+    recurring = parts[0];
+
+    if (recurring === "W" && parts.length > 1) {
+        days = parts[1].split(",");
+    } else if (recurring === "M" && parts.length > 1) {
+        if (parts.length > 2) {
+            monthlyType = "day";
+            monthlyOrdinal = parseInt(parts[1], 10) || 1;
+            monthlyDay = parts[2];
+        } else {
+            monthlyType = "date";
+            monthDayStr = parts[1];
+        }
+    }
+
+    return { recurring, days, monthDayStr, monthlyType, monthlyOrdinal, monthlyDay };
+}
+
 const RECURRING_OPTIONS = [
     { label: "One Time", value: "O" },
     { label: "Daily", value: "D" },
@@ -74,7 +104,7 @@ const RECURRING_OPTIONS = [
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default function CreateChoreModal({ visible, onClose, onSubmit, choreName, choreDescription, choreRecurring, choreStartDate, choreEndDate, choreId, isUpdate }: Props) {
+export default function CreateChoreModal({ visible, onClose, onSubmit, onUpdate, choreName, choreDescription, choreRecurring, choreStartDate, choreEndDate, choreId, isUpdate }: Props) {
     const [name, setName] = useState<string>(choreName || "");
     const [description, setDescription] = useState<string>(choreDescription || "");
     
@@ -84,13 +114,33 @@ export default function CreateChoreModal({ visible, onClose, onSubmit, choreName
     const [activeDatePicker, setActiveDatePicker] = useState<"start" | "end" | null>(null);
     
     // Recurring
-    const [recurring, setRecurringState] = useState<string>(choreRecurring || "D");
-    const [days, setDays] = useState<string[]>(choreRecurring?.split(":")[1].split(",") || []);
-    const [monthDayStr, setMonthDayStr] = useState<string>(choreRecurring?.split(":")[1] || "1");
-    const [monthlyType, setMonthlyType] = useState<"date" | "day">(choreRecurring?.split(":")[1]?.includes(",") ? "day" : "date");
-    const [monthlyOrdinal, setMonthlyOrdinal] = useState<number>(parseInt(choreRecurring?.split(":")[1]?.split(",")[0] || "1"));
-    const [monthlyDay, setMonthlyDay] = useState<string>(choreRecurring?.split(":")[1]?.split(",")[1] || "Sun");
+    const initialRecurring = parseChoreRecurring(choreRecurring);
+    const [recurring, setRecurringState] = useState<string>(initialRecurring.recurring);
+    const [days, setDays] = useState<string[]>(initialRecurring.days);
+    const [monthDayStr, setMonthDayStr] = useState<string>(initialRecurring.monthDayStr);
+    const [monthlyType, setMonthlyType] = useState<"date" | "day">(initialRecurring.monthlyType);
+    const [monthlyOrdinal, setMonthlyOrdinal] = useState<number>(initialRecurring.monthlyOrdinal);
+    const [monthlyDay, setMonthlyDay] = useState<string>(initialRecurring.monthlyDay);
     const [error, setError] = useState<string>("");
+
+    useEffect(() => {
+        if (visible) {
+            setName(choreName || "");
+            setDescription(choreDescription || "");
+            setStartDate(choreStartDate || toLocalDateString(new Date()));
+            setEndDate(choreEndDate || "");
+            
+            const parsed = parseChoreRecurring(choreRecurring);
+            setRecurringState(parsed.recurring);
+            setDays(parsed.days);
+            setMonthDayStr(parsed.monthDayStr);
+            setMonthlyType(parsed.monthlyType);
+            setMonthlyOrdinal(parsed.monthlyOrdinal);
+            setMonthlyDay(parsed.monthlyDay);
+            
+            setError("");
+        }
+    }, [visible, choreId, choreName, choreDescription, choreRecurring, choreStartDate, choreEndDate]);
 
     const resetForm = () => {
         setName("");
@@ -140,7 +190,11 @@ export default function CreateChoreModal({ visible, onClose, onSubmit, choreName
             setError(e instanceof Error ? e.message : "Failed to create chore");
             return;
         }
-        onSubmit(name, description, recurringString, startDate, endDate);
+        if (isUpdate && onUpdate) {
+            onUpdate(choreId!, name, description, recurringString, startDate, endDate);
+        } else if (onSubmit) {
+            onSubmit(name, description, recurringString, startDate, endDate);
+        }
         resetForm();
         onClose();
     };
@@ -406,7 +460,7 @@ export default function CreateChoreModal({ visible, onClose, onSubmit, choreName
                                     className={`flex-1 py-4 rounded-xl items-center justify-center ${name.trim() ? 'bg-blue-600' : 'bg-blue-300'}`}
                                     disabled={!name.trim()}
                                 >
-                                    <Text className="text-white font-bold text-base">Create</Text>
+                                    <Text className="text-white font-bold text-base">{isUpdate? "Update": "Create"}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
