@@ -37,11 +37,14 @@ export default function ChoreCard({ chore, userCanEdit, onPress, markComplete, s
             <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-100">
                 <View className="flex-row items-center flex-1">
                     <Feather name="users" size={16} color="#6B7280" />
-                    <TouchableOpacity onPress={() => {
-                        setAsigneeWindowVisible(true)
-                        setChoreAssigneeIds(chore.assigneeIds || new Set<string>());
-                        setChoreGettingAssignees(chore.id);
-                    }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setAsigneeWindowVisible(true)
+                            setChoreAssigneeIds(chore.assigneeIds || new Set<string>());
+                            setChoreGettingAssignees(chore.id);
+                        }}
+                        disabled={!userCanEdit}
+                    >
                         <Text className="text-sm text-gray-600 ml-2" numberOfLines={1}>
                             {chore.assigneeNames && chore.assigneeNames.length > 0
                                 ? chore.assigneeNames.join(", ")
