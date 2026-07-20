@@ -10,7 +10,7 @@ import { getAllChoresForFamily, toggleChoreComplete, createChore, deleteChore, s
 import DayList from "../../calendar/components/DayList";
 import TodayButton from "../components/TodayButton";
 import { Feather } from "@expo/vector-icons";
-import AddButton from "../components/AddButton";
+import AddButton from "../../../globalComponents/AddButton";
 import CreateChoreModal from "../components/CreateChoreModal";
 import { ChoreDataDto } from "../dto/ChoreDataDto";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
@@ -251,12 +251,11 @@ export default function MainChoreScreen() {
                 setDate={setDate}
                 setToday={setToday}
             />
-            {userCanEdit() && (
-                <AddButton
-                    containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
-                    onPress={() => setCreateModalVisible(true)}
-                />
-            )}
+            <AddButton
+                containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
+                onPress={() => setCreateModalVisible(true)}
+                isVisible={userCanEdit()}
+            />
             <CreateChoreModal
                 visible={createModalVisible}
                 onClose={() => setCreateModalVisible(false)}

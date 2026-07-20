@@ -4,9 +4,13 @@ import { TouchableOpacity, View } from "react-native";
 interface AddButtonProps {
     onPress: () => void;
     containerClassname?: string;
+    isVisible?: boolean;
 }
 
-export default function AddButton({ onPress, containerClassname }: AddButtonProps) {
+export default function AddButton({ onPress, containerClassname, isVisible }: AddButtonProps) {
+    if (!isVisible) {
+        return null;
+    }
     return (
         <TouchableOpacity onPress={onPress} className={containerClassname}>
             <Feather 

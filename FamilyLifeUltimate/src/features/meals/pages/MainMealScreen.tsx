@@ -14,6 +14,7 @@ import { months } from "../../calendar/utils/MonthRecord";
 import TodayButton from "../../chore/components/TodayButton";
 import MealManagerButton from "../components/MealManagerButton";
 import { RelativePathString, router } from "expo-router";
+import AddButton from "@/src/globalComponents/AddButton";
 
 function canEdit(user: User | null, familyId: string) {
     if (!user) return false;
@@ -92,6 +93,11 @@ export default function MainMealScreen() {
                 visible={date.toDateString() !== today.toDateString()}
                 setDate={setDate}
                 setToday={setToday}
+            />
+            <AddButton
+                containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
+                onPress={() => { }}
+                isVisible={canEditResult}
             />
         </View>
     );
