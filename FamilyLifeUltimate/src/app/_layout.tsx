@@ -5,6 +5,7 @@ import { router, Stack } from "expo-router";
 import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import { FamilyProvider } from "../features/family/FamilyContext";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -55,7 +56,9 @@ export default function RootLayout() {
     return (
         <SafeAreaView className="flex-1 bg-background">
             <AuthProvider>
-                <IntialLayout />
+                <FamilyProvider>
+                    <IntialLayout />
+                </FamilyProvider>
             </AuthProvider>
         </SafeAreaView>
     )

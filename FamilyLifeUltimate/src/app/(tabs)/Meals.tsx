@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import MainMealScreen from "@/src/features/meals/pages/MainMealScreen"
 
 export default function Meals() {
-    return (
-        <View>
-            <Text>Meals</Text>
-        </View>
-    )
+    return <MainMealScreen />
 }

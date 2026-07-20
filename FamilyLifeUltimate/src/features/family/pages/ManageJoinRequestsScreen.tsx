@@ -8,7 +8,7 @@ import ScreenHeader from "../components/ScreenHeader";
 import FamilySelector from "../components/FamilySelector";
 import JoinRequestCard from "../components/JoinRequestCard";
 import EmptyRequestsState from "../components/EmptyRequestsState";
-import BackButton from "../components/BackButton";
+import BackButton from "../../../globalComponents/BackButton";
 
 type Props = {
     familyId: string;

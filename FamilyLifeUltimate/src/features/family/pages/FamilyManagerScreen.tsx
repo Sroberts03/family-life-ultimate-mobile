@@ -7,8 +7,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { getAllAuthFamilies } from "../services/family.services";
 import FamilySelector from "../components/FamilySelector";
 import ScreenHeader from "../components/ScreenHeader";
-import ManagerButton from "../components/ManagerButton";
 import { RelativePathString, router } from "expo-router";
+import ManagerButton from "@/src/globalComponents/ManagerButton";
 
 export default function FamilyManagerScreen() {
     const { session } = useAuth();

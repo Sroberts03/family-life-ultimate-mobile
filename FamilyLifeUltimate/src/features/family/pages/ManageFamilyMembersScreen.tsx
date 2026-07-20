@@ -1,6 +1,6 @@
 import { ActivityIndicator, ScrollView, Text, View } from "react-native"
 import ScreenHeader from "../components/ScreenHeader"
-import BackButton from "../components/BackButton"
+import BackButton from "../../../globalComponents/BackButton"
 import { useState } from "react"
 import { Feather } from "@expo/vector-icons"
 import { FamilyMember } from "../family.types";
