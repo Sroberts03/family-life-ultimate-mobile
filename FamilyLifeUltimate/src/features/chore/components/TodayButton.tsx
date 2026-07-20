@@ -4,15 +4,22 @@ interface TodayButtonProps {
     buttonClassname?: string;
     textClassname?: string;
     visible: boolean;
-    onPress: () => void;
+    setDate: (date: Date) => void;
+    setToday: (today: Date) => void;
 }
 
-export default function TodayButton({ buttonClassname, textClassname, visible, onPress }: TodayButtonProps) {
+export default function TodayButton({ buttonClassname, textClassname, visible, setDate, setToday }: TodayButtonProps) {
     if (!visible) return null;
+
+    const todayPressed = () => {
+        const now = new Date();
+        setToday(now);
+        setDate(now);
+    }
 
     return (
         <TouchableOpacity
-            onPress={onPress}
+            onPress={todayPressed}
             className={buttonClassname}
         >
             <Text className={textClassname}>Today</Text>

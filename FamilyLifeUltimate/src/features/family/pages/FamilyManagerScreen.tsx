@@ -6,7 +6,7 @@ import { TruncatedFamily } from "../family.types";
 import { useAuth } from "../../auth/AuthContext";
 import { getAllAuthFamilies } from "../services/family.services";
 import FamilySelector from "../components/FamilySelector";
-import ScreenHeader from "../components/ScreenHeader";
+import ScreenHeader from "../../../globalComponents/ScreenHeader";
 import { RelativePathString, router } from "expo-router";
 import ManagerButton from "@/src/globalComponents/ManagerButton";
 
@@ -50,20 +50,20 @@ export default function FamilyManagerScreen() {
                         setFamilyId={setFamilyId}
                     />
 
-                    <ManagerButton 
-                        title="Manage Join Requests" 
-                        subtitle="Approve or decline join requests." 
-                        onPress={() => manageButtonClicked('/ManageJoinRequests' as RelativePathString, { familyId: familyId })} 
+                    <ManagerButton
+                        title="Manage Join Requests"
+                        subtitle="Approve or decline join requests."
+                        onPress={() => manageButtonClicked('/ManageJoinRequests' as RelativePathString, { familyId: familyId })}
                         icon="users" />
-                    <ManagerButton 
-                        title="Manage Family Rights" 
-                        subtitle="Edit family rights." 
-                        onPress={() => manageButtonClicked('/ManageFamilyRights' as RelativePathString, { familyId: familyId })} 
+                    <ManagerButton
+                        title="Manage Family Rights"
+                        subtitle="Edit family rights."
+                        onPress={() => manageButtonClicked('/ManageFamilyRights' as RelativePathString, { familyId: familyId })}
                         icon="feather" />
-                    <ManagerButton 
-                        title="Manage Family Members" 
-                        subtitle="View and manage family members." 
-                        onPress={() => manageButtonClicked('/ManageFamilyMembers' as RelativePathString, { familyId: familyId })} 
+                    <ManagerButton
+                        title="Manage Family Members"
+                        subtitle="View and manage family members."
+                        onPress={() => manageButtonClicked('/ManageFamilyMembers' as RelativePathString, { familyId: familyId })}
                         icon="user" />
                     <FamilyJoinCode familyId={familyId} />
                 </View>

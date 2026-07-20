@@ -48,6 +48,7 @@ function IntialLayout() {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(familyManager)" options={{ headerShown: false }} />
+            <Stack.Screen name="(meals)" options={{ headerShown: false }} />
         </Stack>
     );
 }

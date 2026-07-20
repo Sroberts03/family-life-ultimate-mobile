@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { getAllAuthFamilies, getAllJoinRequests, acceptOrDenyJoinRequest } from "../services/family.services";
 import { JoinRequest, TruncatedFamily } from "../family.types";
 import { useAuth } from "../../auth/AuthContext";
-import ScreenHeader from "../components/ScreenHeader";
+import ScreenHeader from "../../../globalComponents/ScreenHeader";
 import FamilySelector from "../components/FamilySelector";
 import JoinRequestCard from "../components/JoinRequestCard";
 import EmptyRequestsState from "../components/EmptyRequestsState";

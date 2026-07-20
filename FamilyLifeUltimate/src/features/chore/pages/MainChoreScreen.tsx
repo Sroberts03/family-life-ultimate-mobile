@@ -200,12 +200,6 @@ export default function MainChoreScreen() {
         }
     }
 
-    const todayPressed = () => {
-        const now = new Date();
-        setToday(now);
-        setDate(now);
-    }
-
     return (
         <View className="flex-1 bg-background">
             <View className="px-3">
@@ -254,7 +248,8 @@ export default function MainChoreScreen() {
                 buttonClassname="bg-white rounded-full absolute bottom-28 left-4 w-20 h-12 flex items-center justify-center border border-gray-100 shadow shadow-sm"
                 textClassname="text-text"
                 visible={date.toDateString() !== today.toDateString()}
-                onPress={todayPressed}
+                setDate={setDate}
+                setToday={setToday}
             />
             {userCanEdit() && (
                 <AddButton

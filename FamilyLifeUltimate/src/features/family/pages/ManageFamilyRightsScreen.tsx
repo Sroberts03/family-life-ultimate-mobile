@@ -1,5 +1,5 @@
 import { ScrollView, View, Text, ActivityIndicator } from "react-native";
-import ScreenHeader from "../components/ScreenHeader";
+import ScreenHeader from "../../../globalComponents/ScreenHeader";
 import BackButton from "../../../globalComponents/BackButton";
 import { GetFamilyMembers } from "../services/family.services";
 import { useAuth } from "../../auth/AuthContext";
