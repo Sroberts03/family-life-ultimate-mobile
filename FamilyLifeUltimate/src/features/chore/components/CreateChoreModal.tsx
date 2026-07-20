@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
-import { toLocalDateString } from "../pages/MainChoreScreen";
+import { toLocalDateString } from "@/src/utils/toLocaleDateString";
 
 interface Props {
     visible: boolean;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, Button } from "react-native";
 import { useAuth } from "@/src/features/auth/AuthContext";
 import { User } from "@/src/features/auth/auth.types";
 import { TruncatedFamily } from "../../family/family.types";
@@ -15,6 +15,9 @@ import TodayButton from "../../chore/components/TodayButton";
 import MealManagerButton from "../components/MealManagerButton";
 import { RelativePathString, router } from "expo-router";
 import AddButton from "@/src/globalComponents/AddButton";
+import { MealPlanItem, MealType } from "../meal.types";
+import { fetchMealPlans } from "../services/meal.service";
+import { toLocalDateString } from "@/src/utils/toLocaleDateString";
 
 function canEdit(user: User | null, familyId: string) {
     if (!user) return false;
@@ -33,6 +36,26 @@ export default function MainMealScreen() {
     const [loading, setLoading] = useState<boolean>(false);
     const [date, setDate] = useState<Date>(new Date());
     const [today, setToday] = useState<Date>(new Date());
+    const [createMealPlan, setCreateMealPlan] = useState<boolean>(false);
+    const [mealPlans, setMealPlans] = useState<MealPlanItem[]>([]);
+
+    async function loadMealPlans() {
+        if (!familyId || !session) return;
+        setLoading(true);
+        setError("");
+        try {
+            const mealPlans = await fetchMealPlans(familyId, toLocalDateString(date), session);
+            setMealPlans(mealPlans);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to get chores");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        loadMealPlans();
+    }, [familyId, date]);
 
     const possibleFamilies = [...memberFamilies];
 
@@ -55,18 +78,6 @@ export default function MainMealScreen() {
             <DayList dateBeingViewed={date} setDateBeingViewed={setDate} today={today} />
             <ScrollView>
                 <View className="px-3 mt-5">
-                    {error ? (
-                        <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
-                            <Feather name="alert-circle" size={20} color="#b91c1c" />
-                            <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
-                        </View>
-                    ) : null}
-                    {loading ? (
-                        <ActivityIndicator
-                            size="large"
-                            color="#0000ff"
-                        />
-                    ) : null}
                     <View className="mt-2 flex-row gap-3">
                         <MealManagerButton
                             title="Shopping"
@@ -85,6 +96,31 @@ export default function MainMealScreen() {
                             visible={canEditResult}
                         />
                     </View>
+                    {error ? (
+                        <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
+                            <Feather name="alert-circle" size={20} color="#b91c1c" />
+                            <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
+                        </View>
+                    ) : null}
+                    {loading ? (
+                        <ActivityIndicator
+                            size="large"
+                            color="#0000ff"
+                        />
+                    ) : null}
+                    {mealPlans.length === 0 ? (
+                        <View className="flex-1 items-center justify-center mt-10">
+                            <Text className="text-gray-500">No meals planned for this date</Text>
+                        </View>
+                    ) : null}
+                    {mealPlans.length > 0 ? (
+                        mealPlans.map((mealPlan) => (
+                            <View key={mealPlan.id} className="bg-white p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
+                                <Feather name="alert-circle" size={20} color="#b91c1c" />
+                                <Text className="text-red-700 font-medium ml-3 flex-1">{mealPlan.mealType} - {mealPlan.name}</Text>
+                            </View>
+                        ))
+                    ) : null}
                 </View>
             </ScrollView>
             <TodayButton
@@ -96,7 +132,7 @@ export default function MainMealScreen() {
             />
             <AddButton
                 containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
-                onPress={() => { }}
+                onPress={() => { setCreateMealPlan(true) }}
                 isVisible={canEditResult}
             />
         </View>
