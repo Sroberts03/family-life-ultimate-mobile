@@ -18,7 +18,6 @@ export default async function userData(user: User) {
       .select('family_id, activities!inner (name)')
       .eq('user_id', user.id)
   if (userActivitiesError || !userActivitiesData) {
-      console.log("error fetching user activities: ", userActivitiesError)
       userActivities = []
   } else {
       userActivities = userActivitiesData as unknown as UserActivityRow[]

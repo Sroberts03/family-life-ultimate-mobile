@@ -3,7 +3,7 @@
     "name": "FamilyLifeUltimate",
     "slug": "FamilyLifeUltimate",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "scheme": "familylifeultimate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -16,7 +16,8 @@
         "backgroundColor": "#E6F4FE"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.samr72003.FamilyLifeUltimate"
     },
     "plugins": [
       "expo-router",

@@ -132,7 +132,6 @@ export default function MainChoreScreen() {
         try {
             setError("");
             setLoading(true);
-            console.log(choreId, name, description, recurring, startDate, endDate)
             const chore = await updateChore({ choreId, familyId, name, description, recurring, startDate, endDate }, session);
             const updatedChores = { ...chores };
             updatedChores[choreId] = chore;
@@ -176,9 +175,7 @@ export default function MainChoreScreen() {
     }
 
     const submitChoreAssignment = async (choreId: number, choreAssigneeIds: Set<string>) => {
-        console.log("HERE")
         if (!session || !choreId) return null;
-        console.log("HERE 2")
         try {
             setError("");
             setLoading(true);

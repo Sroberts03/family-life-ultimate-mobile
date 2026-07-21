@@ -28,7 +28,6 @@ export default async function HTTPRequest(
 
     if (!response.ok) {
         const errorData = await response.json();
-        console.log(errorData.body.message);
         throw new Error(errorData.body.message);
     }
     const res = await response.json();

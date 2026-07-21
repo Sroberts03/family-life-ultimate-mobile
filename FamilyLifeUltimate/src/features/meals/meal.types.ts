@@ -13,13 +13,26 @@ export interface RecipeBook {
     updatedAt: Date;
 }
 
+export interface RecipeIngredient {
+    id: number;
+    name: string;
+    quantity: number;
+    unit: string;
+}
+
+export interface RecipeStep {
+    id: number;
+    instruction: string;
+    stepOrder: number;
+}
+
 export interface Recipe {
     id: number;
     recipeBookId: number;
     name: string;
     description: string;
-    ingredients: string;
-    instructions: string;
+    ingredients: RecipeIngredient[];
+    instructions: RecipeStep[];
     prepTime: number;
     cookTime: number;
     servings: number;
@@ -41,7 +54,7 @@ export interface ShoppingListItem {
 export interface MealPlanItem {
     id: number;
     familyId: number;
-    recipeId: number;
+    recipeId: number | null;
     name: string;
     date: Date;
     time: Date;

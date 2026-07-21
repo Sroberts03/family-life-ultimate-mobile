@@ -30,7 +30,6 @@ export async function deleteChore(choreId: number, session: Session, thisAndFutu
 }
 
 export async function submitChoreAssignments(choreAssigneeDto: ChoreAssigneeDto, session: Session) {
-    console.log("choreAssigneeDto", choreAssigneeDto)
     const payload = {
         choreId: choreAssigneeDto.choreId,
         choreAssigneeIds: Array.from(choreAssigneeDto.choreAssigneeIds)

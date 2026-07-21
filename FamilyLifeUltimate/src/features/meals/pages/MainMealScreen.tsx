@@ -18,6 +18,8 @@ import AddButton from "@/src/globalComponents/AddButton";
 import { MealPlanItem, MealType } from "../meal.types";
 import { fetchMealPlans } from "../services/meal.service";
 import { toLocalDateString } from "@/src/utils/toLocaleDateString";
+import MealPlanCard from "../components/MealPlanCard";
+import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 
 function canEdit(user: User | null, familyId: string) {
     if (!user) return false;
@@ -96,31 +98,19 @@ export default function MainMealScreen() {
                             visible={canEditResult}
                         />
                     </View>
-                    {error ? (
-                        <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
-                            <Feather name="alert-circle" size={20} color="#b91c1c" />
-                            <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
-                        </View>
-                    ) : null}
-                    {loading ? (
-                        <ActivityIndicator
-                            size="large"
-                            color="#0000ff"
-                        />
-                    ) : null}
+                    <ErrorLoading error={error} loading={loading} />
                     {mealPlans.length === 0 ? (
                         <View className="flex-1 items-center justify-center mt-10">
                             <Text className="text-gray-500">No meals planned for this date</Text>
                         </View>
                     ) : null}
-                    {mealPlans.length > 0 ? (
-                        mealPlans.map((mealPlan) => (
-                            <View key={mealPlan.id} className="bg-white p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
-                                <Feather name="alert-circle" size={20} color="#b91c1c" />
-                                <Text className="text-red-700 font-medium ml-3 flex-1">{mealPlan.mealType} - {mealPlan.name}</Text>
-                            </View>
-                        ))
-                    ) : null}
+                    <View className="flex-col gap-3 mb-32">
+                        {mealPlans.length > 0 ? (
+                            mealPlans.map((mealPlan) => (
+                                <MealPlanCard key={mealPlan.id} mealPlan={mealPlan} />
+                            ))
+                        ) : null}
+                    </View>
                 </View>
             </ScrollView>
             <TodayButton
