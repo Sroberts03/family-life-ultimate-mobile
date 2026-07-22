@@ -79,8 +79,8 @@ export default function MainMealScreen() {
             </View>
             <DayList dateBeingViewed={date} setDateBeingViewed={setDate} today={today} />
             <ScrollView>
-                <View className="px-3 mt-5">
-                    <View className="mt-2 flex-row gap-3">
+                <View className="px-3 mt-3">
+                    <View className="flex-row gap-3">
                         <MealManagerButton
                             title="Shopping"
                             onPress={() => manageButtonClicked('/ShoppingList' as RelativePathString, { familyId: familyId })}
