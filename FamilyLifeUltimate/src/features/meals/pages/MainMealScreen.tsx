@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator, Button } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { useAuth } from "@/src/features/auth/AuthContext";
 import { User } from "@/src/features/auth/auth.types";
-import { TruncatedFamily } from "../../family/family.types";
-import { fetchAuthFamilies } from "@/src/utils/fetchAuthFamilies";
 import FamilySelector from "../../family/components/FamilySelector";
 import { useFamily } from "@/src/features/family/FamilyContext";
-import ManagerButton from "@/src/globalComponents/ManagerButton";
-import ScreenHeader from "@/src/globalComponents/ScreenHeader";
-import { Feather } from "@expo/vector-icons";
 import DayList from "../../calendar/components/DayList";
 import { months } from "../../calendar/utils/MonthRecord";
 import TodayButton from "../../chore/components/TodayButton";
