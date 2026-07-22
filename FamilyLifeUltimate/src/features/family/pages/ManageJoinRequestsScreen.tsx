@@ -9,6 +9,7 @@ import FamilySelector from "../components/FamilySelector";
 import JoinRequestCard from "../components/JoinRequestCard";
 import EmptyRequestsState from "../components/EmptyRequestsState";
 import BackButton from "../../../globalComponents/BackButton";
+import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 
 type Props = {
     familyId: string;
@@ -67,13 +68,7 @@ export default function ManageJoinRequestsScreen({ familyId }: Props) {
             />
 
             <ScrollView className="flex-1 px-6 pt-6 bg-background">
-                {error ? (
-                    <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
-                        <Feather name="alert-circle" size={20} color="#b91c1c" />
-                        <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
-                    </View>
-                ) : null}
-
+                <ErrorLoading error={error} loading={isLoading} />
                 <View className="pb-12">
                     {requests.length === 0 ? (
                         <EmptyRequestsState />

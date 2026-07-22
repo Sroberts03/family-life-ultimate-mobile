@@ -1,6 +1,6 @@
 import { Modal, View, Text, TouchableOpacity, ScrollView, Switch } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { PersActivity } from "../../auth/auth.types";
+import { PersActivity } from "../family.types";
 import { DetailedActivity } from "../../activities/types/DetailedActivity";
 import { useEffect, useState } from "react";
 

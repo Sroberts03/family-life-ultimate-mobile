@@ -10,6 +10,7 @@ import EditActivityModal from "../components/EditActivityModal";
 import { GetAllActivities, SetPermissions } from "../../activities/service/activities.service";
 import { DetailedActivity } from "../../activities/types/DetailedActivity";
 import FamilyMemberCard from "../components/FamilyMemberCard";
+import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 
 interface props {
     familyId: string;
@@ -18,7 +19,7 @@ export default function ManageFamilyRightsScreen({ familyId }: props) {
     const { session, user } = useAuth();
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string>("");
     const [editRightsModal, setEditRightsModal] = useState<string | null>(null);
     const [allActivities, setAllActivities] = useState<DetailedActivity[]>([]);
 
@@ -82,24 +83,13 @@ export default function ManageFamilyRightsScreen({ familyId }: props) {
 
     const handleEditRightsPress = (userId: string) => {
         setEditRightsModal(userId);
-        setError(null);
+        setError("");
     }
 
     return (
         <View className="flex-1 bg-background">
             <ScreenHeader title="Family Rights" subtitle="Manage permissions for your family." />
-            {error ? (
-                <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
-                    <Feather name="alert-circle" size={20} color="#b91c1c" />
-                    <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
-                </View>
-            ) : null}
-            {loading ? (
-                <ActivityIndicator
-                    size="large"
-                    color="#0000ff"
-                />
-            ) : null}
+            <ErrorLoading error={error} loading={loading} />
             <BackButton
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 

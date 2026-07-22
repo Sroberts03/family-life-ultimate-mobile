@@ -10,6 +10,7 @@ import { GetFamilyMembers, RemoveFamilyMember } from "../services/family.service
 import FamilyMemberRightsCard from "../components/FamilyMemberCard"
 import FamilyMemberCard from "../components/FamilyMemberCard"
 import ConfirmMemberRemoval from "../components/ConfirmMemberRemoval"
+import ErrorLoading from "@/src/globalComponents/ErrorLoading"
 
 interface props {
     familyId: string;
@@ -17,7 +18,7 @@ interface props {
 export default function ManageFamilyMembersScreen({ familyId }: props) {
     const { session, user } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string>("");
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
     const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
 
@@ -63,18 +64,7 @@ export default function ManageFamilyMembersScreen({ familyId }: props) {
     return (
         <View className="flex-1 bg-background">
             <ScreenHeader title="Family Members" subtitle="Manage members in your family." />
-            {error ? (
-                <View className="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex-row items-center">
-                    <Feather name="alert-circle" size={20} color="#b91c1c" />
-                    <Text className="text-red-700 font-medium ml-3 flex-1">{error}</Text>
-                </View>
-            ) : null}
-            {loading ? (
-                <ActivityIndicator
-                    size="large"
-                    color="#0000ff"
-                />
-            ) : null}
+            <ErrorLoading error={error} loading={loading} />
             <BackButton
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 

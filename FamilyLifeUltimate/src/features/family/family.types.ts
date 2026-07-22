@@ -32,8 +32,9 @@ export interface TruncatedFamily {
 }
 
 export interface PersActivity {
+    activityId: number;
+    activityName: string;
     familyId: string;
-    activity: string;
 }
 
 export interface FamilyMember {
