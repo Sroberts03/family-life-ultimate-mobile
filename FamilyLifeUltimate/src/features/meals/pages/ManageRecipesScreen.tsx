@@ -5,15 +5,15 @@ import { RecipeBook } from "../meal.types";
 import { useEffect, useState } from "react";
 import { fetchRecipeBooks } from "../services/meal.service";
 import { RecipeBookCard } from "../components/RecipeBookCard";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "@/src/globalComponents/ScreenHeader";
 import AddButton from "@/src/globalComponents/AddButton";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import BackButton from "@/src/globalComponents/BackButton";
 import { RelativePathString, router } from "expo-router";
+import CheckPermissions from "@/src/utils/CheckPermissions";
 
 export default function ManageRecipesScreen() {
-    const { user, session } = useAuth();
+    const { session } = useAuth();
     const { familyId } = useFamily();
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);

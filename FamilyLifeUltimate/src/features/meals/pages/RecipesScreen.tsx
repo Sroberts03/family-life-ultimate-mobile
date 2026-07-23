@@ -8,6 +8,7 @@ import BackButton from "@/src/globalComponents/BackButton";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import AddButton from "@/src/globalComponents/AddButton";
 import RecipePageCard from "../components/RecipePageCard";
+import CheckPermissions from "@/src/utils/CheckPermissions";
 import { router } from "expo-router";
 
 interface RecipesScreenProps {

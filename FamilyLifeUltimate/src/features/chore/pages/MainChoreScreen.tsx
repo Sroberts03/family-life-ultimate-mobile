@@ -16,9 +16,9 @@ import { ChoreDataDto } from "../dto/ChoreDataDto";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import { months } from "../../calendar/utils/MonthRecord";
 import ChoreAssignment from "../components/ChoreAssignment";
-import { fetchAuthFamilies } from "@/src/utils/fetchAuthFamilies";
 import { useFamily } from "../../family/FamilyContext";
 import { toLocalDateString } from "@/src/utils/toLocaleDateString";
+import CheckPermissions from "@/src/utils/CheckPermissions";
 
 export default function MainChoreScreen() {
     const { session, user } = useAuth();
@@ -36,6 +36,8 @@ export default function MainChoreScreen() {
     const [choreAssigneeIds, setChoreAssigneeIds] = useState<Set<string>>(new Set());
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
     const [choreGettingAssignees, setChoreGettingAssignees] = useState<number | null>(null);
+    const canEditResult: boolean = CheckPermissions('chore');
+
 
     const possibleFamilies = [...memberFamilies];
 
@@ -59,7 +61,7 @@ export default function MainChoreScreen() {
     useEffect(() => {
         const fetchFamilyMembers = async () => {
             if (!session || !familyId) return;
-            if (!userCanEdit()) return;
+            if (!canEditResult) return;
             try {
                 setError("");
                 setLoading(true);
@@ -77,7 +79,7 @@ export default function MainChoreScreen() {
     useEffect(() => {
         const getEditChoreInfo = async () => {
             if (!session || !editingChore) return;
-            if (!userCanEdit()) return;
+            if (!canEditResult) return;
             try {
                 setError("");
                 setLoading(true);
@@ -94,13 +96,7 @@ export default function MainChoreScreen() {
 
     if (!session || !user) return null;
 
-    const userCanEdit = () => {
-        if (!familyId) return false;
-        if (!user.activities.get(familyId)) return false;
-        return user.activities.get(familyId)!.has("edit_chores")
-            || user.activities.get(familyId)!.has("household_head")
-            || user.activities.get(familyId)!.has("authorized_user");
-    }
+    
 
     const onPress = (action: "edit" | "delete", chore: Chore) => {
         if (action === "edit") {
@@ -221,7 +217,7 @@ export default function MainChoreScreen() {
                     <ChoreCard
                         chore={chore}
                         key={chore.id}
-                        userCanEdit={userCanEdit()}
+                        userCanEdit={canEditResult}
                         onPress={onPress}
                         markComplete={markComplete}
                         setAsigneeWindowVisible={setAsigneeWindowVisible}
@@ -245,7 +241,7 @@ export default function MainChoreScreen() {
             <AddButton
                 containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
                 onPress={() => setCreateModalVisible(true)}
-                isVisible={userCanEdit()}
+                isVisible={canEditResult}
             />
             <CreateChoreModal
                 visible={createModalVisible}

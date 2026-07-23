@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import { Recipe } from "../meal.types";
 import { useAuth } from "../../auth/AuthContext";
 import { fetchRecipeDetail } from "../services/meal.service";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import BackButton from "@/src/globalComponents/BackButton";
+import CheckPermissions from "@/src/utils/CheckPermissions";
 
 interface Props {
     recipeId: number;
@@ -18,6 +17,7 @@ export default function RecipeScreen({ recipeId }: Props) {
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
+    const canEditResult: boolean = CheckPermissions('meal');
 
     async function loadRecipe() {
         if (!user || !session) return;

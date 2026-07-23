@@ -15,20 +15,12 @@ import { fetchMealPlans } from "../services/meal.service";
 import { toLocalDateString } from "@/src/utils/toLocaleDateString";
 import MealPlanCard from "../components/MealPlanCard";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
-
-function canEdit(user: User | null, familyId: string) {
-    if (!user) return false;
-    if (!familyId) return false;
-    if (!user.activities.get(familyId)) return false;
-    return user.activities.get(familyId)!.has("edit_meals") ||
-        user.activities.get(familyId)!.has("household_head") ||
-        user.activities.get(familyId)!.has("authorized_user");
-}
+import CheckPermissions from "@/src/utils/CheckPermissions";
 
 export default function MainMealScreen() {
-    const { user, session } = useAuth();
+    const { session } = useAuth();
     const { familyId, memberFamilies, setFamilyId } = useFamily();
-    const canEditResult: boolean = canEdit(user, familyId);
+    const canEditResult: boolean = CheckPermissions('meal');
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [date, setDate] = useState<Date>(new Date());
