@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons';
 
 interface RecipeBookCardProps {
     recipeBook: RecipeBook;
-    onPress?: () => void;
+    onPress: (recipeBookId: number) => void;
 }
 
 export function RecipeBookCard({ recipeBook, onPress }: RecipeBookCardProps) {
@@ -15,7 +15,7 @@ export function RecipeBookCard({ recipeBook, onPress }: RecipeBookCardProps) {
     return (
         <TouchableOpacity
             activeOpacity={0.8}
-            onPress={onPress}
+            onPress={() => onPress(recipeBook.id)}
             style={{ 
                 width: cardWidth,
                 height: cardWidth * 1.35, 

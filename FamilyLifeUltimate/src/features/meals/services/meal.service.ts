@@ -4,6 +4,7 @@ import { GetMealPlansDto } from "../dto/GetMealPlansDto";
 import { MealPlanItem, Recipe, RecipeBook } from "../meal.types";
 import { GetRecipeResDto } from "../dto/GetRecipeResDto";
 import GetRecipeBooksDto from "../dto/GetRecipeBooksDto";
+import { GetRecipesDto } from "../dto/GetRecipesDto";
 
 export async function fetchMealPlans(familyId: string, date: string, session: Session): Promise<MealPlanItem[]> {
     const response: GetMealPlansDto = await HTTPRequest("GET", `meals/get-all-meal-plans-date?familyId=${familyId}&date=${date}`, true, session);
@@ -18,6 +19,11 @@ export async function fetchRecipeDetail(recipeId: number, session: Session): Pro
 export async function fetchRecipeBooks(familyId: string, session: Session): Promise<RecipeBook[]> {
     const response: GetRecipeBooksDto = await HTTPRequest("GET", `meals/get-recipe-books?familyId=${familyId}`, true, session);
     return response.recipeBooks;
+}
+
+export async function fetchRecipes(recipeBookId: string, session: Session): Promise<Recipe[]> {
+    const response: GetRecipesDto = await HTTPRequest("GET", `meals/get-recipes?recipeBookId=${recipeBookId}`, true, session);
+    return response.recipes;
 }
 
     

@@ -98,7 +98,7 @@ export default function RecipeScreen({ recipeId }: Props) {
                                         <View
                                             key={ingredient.id}
                                             className={`flex-row items-center py-4 px-4 ${
-                                                index !== recipe.ingredients.length - 1
+                                                index !== recipe.ingredients!.length - 1
                                                     ? 'border-b border-slate-100 dark:border-slate-800'
                                                     : ''
                                             }`}

@@ -10,6 +10,7 @@ import ScreenHeader from "@/src/globalComponents/ScreenHeader";
 import AddButton from "@/src/globalComponents/AddButton";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import BackButton from "@/src/globalComponents/BackButton";
+import { RelativePathString, router } from "expo-router";
 
 export default function ManageRecipesScreen() {
     const { user, session } = useAuth();
@@ -36,6 +37,10 @@ export default function ManageRecipesScreen() {
         loadRecipeBooks();
     }, [familyId]);
 
+    const recipeBookPressed = (recipeBookId: number) => {
+        router.push({ pathname: '/Recipes' as RelativePathString, params: { recipeBookId: recipeBookId } });
+    }
+
     return (
         <View className="flex-1 bg-background"> 
             <ScreenHeader title="Recipe Books" subtitle="Manage Recipe Books"/>
@@ -51,7 +56,7 @@ export default function ManageRecipesScreen() {
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <View className="flex-row flex-wrap px-1 pt-4">
                     {recipeBooks.map((recipeBook) => (
-                        <RecipeBookCard key={recipeBook.id} recipeBook={recipeBook} />
+                        <RecipeBookCard key={recipeBook.id} recipeBook={recipeBook} onPress={() => recipeBookPressed(recipeBook.id)} />
                     ))}
                 </View>
             </ScrollView>
