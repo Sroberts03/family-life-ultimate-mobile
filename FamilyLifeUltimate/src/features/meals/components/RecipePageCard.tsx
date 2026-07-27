@@ -1,6 +1,10 @@
 import { View, Text, TouchableOpacity, Platform } from "react-native";
 import { Recipe } from "../meal.types";
 import { Feather } from "@expo/vector-icons";
+import usePermissions from "@/src/utils/UsePermissions";
+import { useState } from "react";
+import { editRecipe } from "../utils/editRecipes";
+import RecipeEditActionButtons from "./RecipeEditActionButtons";
 
 interface RecipePageCardProps {
     recipe: Recipe;
@@ -8,8 +12,11 @@ interface RecipePageCardProps {
 }
 
 export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps) {
+    const canEditResult: boolean = usePermissions('recipes');
+    const [deleteModal, setDeleteModal] = useState(false);
+
     return (
-        <TouchableOpacity 
+        <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => onPress && onPress(recipe.id)}
             className="bg-[#fcfaf5] rounded-xl shadow-sm mb-5 mx-4 border border-[#e6e2d6] overflow-hidden"
@@ -28,16 +35,14 @@ export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps)
             <View className="p-5">
                 {/* Title and Icons */}
                 <View className="flex-row justify-between items-start mb-4">
-                    <Text 
-                        className="text-[22px] font-bold text-slate-800 flex-1 mr-4" 
+                    <Text
+                        className="text-[22px] font-bold text-slate-800 flex-1 mr-4"
                         style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
                         numberOfLines={2}
                     >
                         {recipe.name}
                     </Text>
-                    <View className="w-10 h-10 rounded-full bg-orange-100/80 items-center justify-center border border-orange-200/60 shadow-sm">
-                        <Feather name="book-open" size={18} color="#ea580c" />
-                    </View>
+                    <RecipeEditActionButtons recipeId={recipe.id} setDeleteModal={setDeleteModal} />
                 </View>
 
                 {/* Meta details (Time, Servings) */}
@@ -50,7 +55,7 @@ export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps)
                             Prep: {recipe.prepTime}m
                         </Text>
                     </View>
-                    
+
                     <View className="flex-row items-center mr-5 mb-2">
                         <View className="bg-[#e6e2d6]/50 p-1.5 rounded-full mr-2">
                             <Feather name="thermometer" size={12} color="#78716c" />
@@ -71,8 +76,8 @@ export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps)
                 </View>
 
                 {/* Description */}
-                <Text 
-                    className="text-stone-700 leading-relaxed text-[15px] italic" 
+                <Text
+                    className="text-stone-700 leading-relaxed text-[15px] italic"
                     numberOfLines={4}
                     style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
                 >

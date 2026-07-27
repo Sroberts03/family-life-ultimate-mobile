@@ -15,12 +15,13 @@ import { fetchMealPlans } from "../services/meal.service";
 import { toLocalDateString } from "@/src/utils/toLocaleDateString";
 import MealPlanCard from "../components/MealPlanCard";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
-import CheckPermissions from "@/src/utils/CheckPermissions";
+import usePermissions from "@/src/utils/UsePermissions";
 
 export default function MainMealScreen() {
     const { session } = useAuth();
     const { familyId, memberFamilies, setFamilyId } = useFamily();
-    const canEditResult: boolean = CheckPermissions('meal');
+    const canAddMealPlansResult: boolean = usePermissions('meal')
+    const canViewShoppingListResult: boolean = usePermissions('shoppinglist')
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [date, setDate] = useState<Date>(new Date());
@@ -74,7 +75,7 @@ export default function MainMealScreen() {
                             icon="shopping-cart"
                             buttonClassname="bg-white flex-1"
                             textClassname="text-text"
-                            visible={canEditResult}
+                            visible={canViewShoppingListResult}
                         />
                         <MealManagerButton
                             title="Recipes"
@@ -82,7 +83,7 @@ export default function MainMealScreen() {
                             icon="book"
                             buttonClassname="bg-white flex-1"
                             textClassname="text-text"
-                            visible={canEditResult}
+                            visible={true}
                         />
                     </View>
                     <ErrorLoading error={error} loading={loading} />
@@ -110,7 +111,7 @@ export default function MainMealScreen() {
             <AddButton
                 containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
                 onPress={() => { setCreateMealPlan(true) }}
-                isVisible={canEditResult}
+                isVisible={canAddMealPlansResult}
             />
         </View>
     );

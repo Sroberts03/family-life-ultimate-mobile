@@ -10,7 +10,7 @@ import AddButton from "@/src/globalComponents/AddButton";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import BackButton from "@/src/globalComponents/BackButton";
 import { RelativePathString, router } from "expo-router";
-import CheckPermissions from "@/src/utils/CheckPermissions";
+import usePermissions from "@/src/utils/UsePermissions";
 
 export default function ManageRecipesScreen() {
     const { session } = useAuth();
@@ -18,6 +18,7 @@ export default function ManageRecipesScreen() {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [recipeBooks, setRecipeBooks] = useState<RecipeBook[]>([]);
+    const canEditResult: boolean = usePermissions('recipes');
 
     async function loadRecipeBooks() {
         if (!familyId || !session) return;
@@ -42,9 +43,9 @@ export default function ManageRecipesScreen() {
     }
 
     return (
-        <View className="flex-1 bg-background"> 
-            <ScreenHeader title="Recipe Books" subtitle="Manage Recipe Books"/>
-            <BackButton 
+        <View className="flex-1 bg-background">
+            <ScreenHeader title="Recipe Books" subtitle="Manage Recipe Books" />
+            <BackButton
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 
                 items-center justify-center transition-colors
@@ -60,9 +61,9 @@ export default function ManageRecipesScreen() {
                     ))}
                 </View>
             </ScrollView>
-            <AddButton 
+            <AddButton
                 onPress={() => console.log("needs implemented")}
-                isVisible={true} 
+                isVisible={canEditResult}
                 containerClassname="bg-blue-100 rounded-full absolute bottom-1 right-5 w-16 h-16 flex items-center justify-center shadow shadow-sm"
             />
         </View>

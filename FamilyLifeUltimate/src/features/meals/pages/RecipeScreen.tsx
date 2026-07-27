@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { Recipe } from "../meal.types";
 import { useAuth } from "../../auth/AuthContext";
 import { fetchRecipeDetail } from "../services/meal.service";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import BackButton from "@/src/globalComponents/BackButton";
-import CheckPermissions from "@/src/utils/CheckPermissions";
+import usePermissions from "@/src/utils/UsePermissions";
+import { editRecipe } from "../utils/editRecipes";
+import RecipeEditActionButtons from "../components/RecipeEditActionButtons";
 
 interface Props {
     recipeId: number;
@@ -17,7 +19,8 @@ export default function RecipeScreen({ recipeId }: Props) {
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
-    const canEditResult: boolean = CheckPermissions('meal');
+    const [deleteModal, setDeleteModal] = useState(false);
+    const canEditResult: boolean = usePermissions('recipes');
 
     async function loadRecipe() {
         if (!user || !session) return;
@@ -50,6 +53,7 @@ export default function RecipeScreen({ recipeId }: Props) {
                 <Text className="text-lg font-bold text-slate-900 dark:text-white ml-3 flex-1" numberOfLines={1}>
                     {recipe?.name || "Loading Recipe..."}
                 </Text>
+                <RecipeEditActionButtons recipeId={recipeId} setDeleteModal={setDeleteModal} />
             </View>
 
             <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
@@ -97,11 +101,10 @@ export default function RecipeScreen({ recipeId }: Props) {
                                     recipe.ingredients.map((ingredient, index) => (
                                         <View
                                             key={ingredient.id}
-                                            className={`flex-row items-center py-4 px-4 ${
-                                                index !== recipe.ingredients!.length - 1
+                                            className={`flex-row items-center py-4 px-4 ${index !== recipe.ingredients!.length - 1
                                                     ? 'border-b border-slate-100 dark:border-slate-800'
                                                     : ''
-                                            }`}
+                                                }`}
                                         >
                                             <View className="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/30 items-center justify-center mr-4">
                                                 <Ionicons name="ellipse" size={8} color="#3b82f6" />

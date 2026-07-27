@@ -18,7 +18,7 @@ import { months } from "../../calendar/utils/MonthRecord";
 import ChoreAssignment from "../components/ChoreAssignment";
 import { useFamily } from "../../family/FamilyContext";
 import { toLocalDateString } from "@/src/utils/toLocaleDateString";
-import CheckPermissions from "@/src/utils/CheckPermissions";
+import usePermissions from "@/src/utils/UsePermissions";
 
 export default function MainChoreScreen() {
     const { session, user } = useAuth();
@@ -36,7 +36,7 @@ export default function MainChoreScreen() {
     const [choreAssigneeIds, setChoreAssigneeIds] = useState<Set<string>>(new Set());
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
     const [choreGettingAssignees, setChoreGettingAssignees] = useState<number | null>(null);
-    const canEditResult: boolean = CheckPermissions('chore');
+    const canEditResult: boolean = usePermissions('chore');
 
 
     const possibleFamilies = [...memberFamilies];
@@ -96,7 +96,7 @@ export default function MainChoreScreen() {
 
     if (!session || !user) return null;
 
-    
+
 
     const onPress = (action: "edit" | "delete", chore: Chore) => {
         if (action === "edit") {

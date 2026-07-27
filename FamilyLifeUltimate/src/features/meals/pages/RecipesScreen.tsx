@@ -8,7 +8,7 @@ import BackButton from "@/src/globalComponents/BackButton";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import AddButton from "@/src/globalComponents/AddButton";
 import RecipePageCard from "../components/RecipePageCard";
-import CheckPermissions from "@/src/utils/CheckPermissions";
+import usePermissions from "@/src/utils/UsePermissions";
 import { router } from "expo-router";
 
 interface RecipesScreenProps {
@@ -20,6 +20,7 @@ export default function RecipesScreen({ recipeBookId }: RecipesScreenProps) {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
+    const canEditResult: boolean = usePermissions('recipes');
 
     async function loadRecipes() {
         if (!recipeBookId || !session) return;
@@ -45,8 +46,8 @@ export default function RecipesScreen({ recipeBookId }: RecipesScreenProps) {
 
     return (
         <View className="flex-1 bg-background">
-            <ScreenHeader title="Recipes" subtitle="Manage Recipes"/>
-            <BackButton 
+            <ScreenHeader title="Recipes" subtitle="Manage Recipes" />
+            <BackButton
                 className="w-12 h-12 
                 bg-white border border-gray-100 rounded-full 
                 items-center justify-center transition-colors
@@ -61,14 +62,14 @@ export default function RecipesScreen({ recipeBookId }: RecipesScreenProps) {
                         <Text className="text-center text-gray-500 mt-4">No recipes found</Text>
                     ) : (
                         recipes.map((recipe) => (
-                            <RecipePageCard key={recipe.id} recipe={recipe} onPress={() => recipePressed(recipe.id)} /> 
+                            <RecipePageCard key={recipe.id} recipe={recipe} onPress={() => recipePressed(recipe.id)} />
                         ))
                     )}
                 </View>
             </ScrollView>
-            <AddButton 
+            <AddButton
                 onPress={() => console.log("needs implemented")}
-                isVisible={true} 
+                isVisible={canEditResult}
                 containerClassname="bg-blue-100 rounded-full absolute bottom-1 right-5 w-16 h-16 flex items-center justify-center shadow shadow-sm"
             />
         </View>
