@@ -11,6 +11,7 @@ import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import BackButton from "@/src/globalComponents/BackButton";
 import { RelativePathString, router } from "expo-router";
 import usePermissions from "@/src/utils/UsePermissions";
+import CreateEditRecipeBook from "../components/CreateEditRecipeBook";
 
 export default function ManageRecipesScreen() {
     const { session } = useAuth();
@@ -18,6 +19,10 @@ export default function ManageRecipesScreen() {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [recipeBooks, setRecipeBooks] = useState<RecipeBook[]>([]);
+    const [editRecipeBook, setEditRecipeBook] = useState<boolean>(false);
+    const [editRecipeBookName, setEditRecipeBookName] = useState<string>("");
+    const [editRecipeBookId, setEditRecipeBookId] = useState<number | undefined>(undefined);
+    const [deleteModal, setDeleteModal] = useState<boolean>(false);
     const canEditResult: boolean = usePermissions('recipes');
 
     async function loadRecipeBooks() {
@@ -42,6 +47,12 @@ export default function ManageRecipesScreen() {
         router.push({ pathname: '/Recipes' as RelativePathString, params: { recipeBookId: recipeBookId } });
     }
 
+    const addRecipeBookPressed = () => {
+        setEditRecipeBook(true);
+        setEditRecipeBookId(undefined);
+        setEditRecipeBookName("");
+    }
+
     return (
         <View className="flex-1 bg-background">
             <ScreenHeader title="Recipe Books" subtitle="Manage Recipe Books" />
@@ -57,14 +68,32 @@ export default function ManageRecipesScreen() {
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <View className="flex-row flex-wrap px-1 pt-4">
                     {recipeBooks.map((recipeBook) => (
-                        <RecipeBookCard key={recipeBook.id} recipeBook={recipeBook} onPress={() => recipeBookPressed(recipeBook.id)} />
+                        <RecipeBookCard
+                            key={recipeBook.id}
+                            recipeBook={recipeBook}
+                            onPress={recipeBookPressed}
+                            setDeleteModal={setDeleteModal}
+                            setEditRecipeBookModal={setEditRecipeBook}
+                            setEditRecipeBookId={setEditRecipeBookId}
+                            setEditRecipeBookName={setEditRecipeBookName}
+                        />
                     ))}
                 </View>
             </ScrollView>
             <AddButton
-                onPress={() => console.log("needs implemented")}
+                onPress={addRecipeBookPressed}
                 isVisible={canEditResult}
                 containerClassname="bg-blue-100 rounded-full absolute bottom-1 right-5 w-16 h-16 flex items-center justify-center shadow shadow-sm"
+            />
+            <CreateEditRecipeBook
+                visible={editRecipeBook}
+                setVisible={setEditRecipeBook}
+                setEditRecipeBookId={setEditRecipeBookId}
+                setEditRecipeBookName={setEditRecipeBookName}
+                id={editRecipeBookId}
+                name={editRecipeBookName}
+                setRecipeBooks={setRecipeBooks}
+                books={recipeBooks}
             />
         </View>
     );

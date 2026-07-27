@@ -6,6 +6,10 @@ import { useState } from 'react';
 import RecipeEditActionButtons from './RecipeEditActionButtons';
 
 interface RecipeBookCardProps {
+    setDeleteModal: (show: boolean) => void;
+    setEditRecipeBookModal: (show: boolean) => void;
+    setEditRecipeBookName: (name: string) => void;
+    setEditRecipeBookId: (id: number | undefined) => void;
     recipeBook: RecipeBook;
     onPress: (recipeBookId: number) => void;
 }
@@ -16,13 +20,17 @@ const formatName = (name: string) => {
     }).join(' ');
 }
 
-export function RecipeBookCard({ recipeBook, onPress }: RecipeBookCardProps) {
+export function RecipeBookCard({ recipeBook, onPress, setDeleteModal, setEditRecipeBookModal, setEditRecipeBookId, setEditRecipeBookName }: RecipeBookCardProps) {
     const { width } = useWindowDimensions();
     // Assuming 2 columns, padding horizontally is 24 (12 * 2), gap is 16
     const cardWidth = (width - 24 - 16) / 2;
     const canEditResult: boolean = usePermissions('recipes');
-    const [deleteModal, setDeleteModal] = useState(false);
-    const [editBookModal, setEditBookModal] = useState(false);
+
+    const editRecipeBook = () => {
+        setEditRecipeBookId(recipeBook.id);
+        setEditRecipeBookName(recipeBook.name);
+        setEditRecipeBookModal(true);
+    }
 
     return (
         <TouchableOpacity
@@ -57,7 +65,7 @@ export function RecipeBookCard({ recipeBook, onPress }: RecipeBookCardProps) {
                         </Text>
                         <RecipeEditActionButtons
                             setDeleteModal={setDeleteModal}
-                            setEditRecipeBookModal={setEditBookModal}
+                            setEditRecipeBookModal={editRecipeBook}
                             flexDirection={"column"}
                         />
                     </View>

@@ -251,16 +251,16 @@ export default function CreateChoreModal({ visible, onClose, onSubmit, onUpdate,
         <Modal
             visible={visible}
             transparent={true}
-            animationType="slide"
+            animationType="fade"
             onRequestClose={handleClose}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View className="flex-1 justify-end bg-black/50">
+                <View className="flex-1 justify-center items-center bg-black/50 px-5">
                     <KeyboardAvoidingView
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                         className="w-full"
                     >
-                        <View className="bg-white rounded-t-3xl p-6 w-full max-h-[90vh]">
+                        <View className="bg-white rounded-3xl p-6 w-full max-h-[90vh] shadow-xl">
                             <View className="flex-row justify-between items-center mb-6">
                                 <Text className="text-2xl font-bold text-gray-800">New Chore</Text>
                                 <TouchableOpacity onPress={handleClose} className="p-2 bg-gray-100 rounded-full">
