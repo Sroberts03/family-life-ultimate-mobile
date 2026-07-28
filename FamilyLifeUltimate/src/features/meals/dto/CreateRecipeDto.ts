@@ -1,16 +1,13 @@
-import { RecipeBook } from "../meal.types";
+import { Recipe, RecipeIngredient, RecipeStep } from "../meal.types";
 
-export interface CreateRecipeBookReqDto {
-    familyId: string;
-    name: string;
+export interface UpdateRecipeReqDto {
+    id?: number;
+    recipeBookId?: number;
+    name?: string;
+    description?: string;
+    url?: string;
 }
 
-export interface UpdateRecipeBookReqDto {
-    name: string;
-    id: number;
+export interface UpdateRecipeResDto {
+    recipe: Recipe;
 }
-
-export interface UpdateRecipeBookResDto {
-    recipeBook: RecipeBook;
-}
-    

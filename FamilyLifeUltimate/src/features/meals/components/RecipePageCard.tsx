@@ -3,22 +3,22 @@ import { Recipe } from "../meal.types";
 import { Feather } from "@expo/vector-icons";
 import usePermissions from "@/src/utils/UsePermissions";
 import { useState } from "react";
-import { editRecipe } from "../utils/editRecipes";
 import RecipeEditActionButtons from "./RecipeEditActionButtons";
 
 interface RecipePageCardProps {
+    setDeleteModal: (show: boolean) => void;
+    setEditRecipe: (show: boolean) => void;
+    setSelectedRecipe: (recipe: Recipe) => void;
     recipe: Recipe;
     onPress?: (recipeId: number) => void;
 }
 
-export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps) {
-    const canEditResult: boolean = usePermissions('recipes');
-    const [deleteModal, setDeleteModal] = useState(false);
+export default function RecipePageCard({ setDeleteModal, setEditRecipe, setSelectedRecipe, recipe, onPress }: RecipePageCardProps) {
 
     return (
         <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => onPress && onPress(recipe.id)}
+            onPress={() => onPress && onPress(recipe.id!)}
             className="bg-[#fcfaf5] rounded-xl shadow-sm mb-5 mx-4 border border-[#e6e2d6] overflow-hidden"
             style={{
                 shadowColor: '#8c7e61',
@@ -42,37 +42,12 @@ export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps)
                     >
                         {recipe.name}
                     </Text>
-                    <RecipeEditActionButtons recipeId={recipe.id} setDeleteModal={setDeleteModal} />
-                </View>
-
-                {/* Meta details (Time, Servings) */}
-                <View className="flex-row items-center flex-wrap mb-4 pb-4 border-b border-dashed border-[#d5d0c4]">
-                    <View className="flex-row items-center mr-5 mb-2">
-                        <View className="bg-[#e6e2d6]/50 p-1.5 rounded-full mr-2">
-                            <Feather name="clock" size={12} color="#78716c" />
-                        </View>
-                        <Text className="text-xs text-stone-600 font-semibold uppercase tracking-wider">
-                            Prep: {recipe.prepTime}m
-                        </Text>
-                    </View>
-
-                    <View className="flex-row items-center mr-5 mb-2">
-                        <View className="bg-[#e6e2d6]/50 p-1.5 rounded-full mr-2">
-                            <Feather name="thermometer" size={12} color="#78716c" />
-                        </View>
-                        <Text className="text-xs text-stone-600 font-semibold uppercase tracking-wider">
-                            Cook: {recipe.cookTime}m
-                        </Text>
-                    </View>
-
-                    <View className="flex-row items-center mb-2">
-                        <View className="bg-[#e6e2d6]/50 p-1.5 rounded-full mr-2">
-                            <Feather name="users" size={12} color="#78716c" />
-                        </View>
-                        <Text className="text-xs text-stone-600 font-semibold uppercase tracking-wider">
-                            Serves: {recipe.servings}
-                        </Text>
-                    </View>
+                    <RecipeEditActionButtons 
+                        recipe={recipe}
+                        setDeleteModal={setDeleteModal}
+                        setEditModal={setEditRecipe}
+                        setSelectedRecipe={setSelectedRecipe}
+                    />
                 </View>
 
                 {/* Description */}
@@ -87,7 +62,7 @@ export default function RecipePageCard({ recipe, onPress }: RecipePageCardProps)
                 {/* Card "Holes" or bottom flair */}
                 <View className="flex-row justify-end mt-5 pt-3 border-t border-[#e6e2d6]/60">
                     <Text className="text-[10px] text-stone-400 uppercase tracking-widest font-bold">
-                        Added {new Date(recipe.createdAt).toLocaleDateString()}
+                        Added {new Date(recipe.createdAt!).toLocaleDateString()}
                     </Text>
                 </View>
             </View>

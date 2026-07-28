@@ -1,27 +1,26 @@
 import { TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import usePermissions from "@/src/utils/UsePermissions";
-import { editRecipe } from "../utils/editRecipes";
 import { useState } from "react";
+import { Recipe } from "../meal.types";
 
 interface props {
     setDeleteModal: (value: boolean) => void;
     flexDirection?: "row" | "column";
-    recipeId?: number;
-    setEditRecipeBookModal?: (value: boolean) => void;
+    recipe: Recipe;
+    setEditModal: (value: boolean) => void;
+    setSelectedRecipe?: (recipe: Recipe) => void;
 }
 
-export default function RecipeEditActionButtons({ recipeId, setDeleteModal, setEditRecipeBookModal, flexDirection = "row" }: props) {
+export default function RecipeEditActionButtons({ recipe, setDeleteModal, setEditModal, flexDirection = "row", setSelectedRecipe }: props) {
     const canEditResult: boolean = usePermissions('recipes');
     const [showButtons, setShowButtons] = useState(false);
 
     const handleEdit = () => {
-        if (setEditRecipeBookModal) {
-            setEditRecipeBookModal(true);
+        if (setSelectedRecipe) {
+            setSelectedRecipe(recipe);
         }
-        else if (recipeId) {
-            editRecipe(recipeId);
-        }
+        setEditModal(true);
     }
 
     if (flexDirection === "column") {

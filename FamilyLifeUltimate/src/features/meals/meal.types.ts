@@ -14,30 +14,26 @@ export interface RecipeBook {
 }
 
 export interface RecipeIngredient {
-    id: number;
+    id?: number;
     name: string;
     quantity: number;
     unit: string;
 }
 
 export interface RecipeStep {
-    id: number;
+    id?: number;
     instruction: string;
     stepOrder: number;
 }
 
 export interface Recipe {
-    id: number;
-    recipeBookId: number;
+    id?: number;
+    recipeBookId?: number;
     name: string;
     description: string;
-    ingredients: RecipeIngredient[];
-    instructions: RecipeStep[];
-    prepTime: number;
-    cookTime: number;
-    servings: number;
-    createdAt: Date;
-    updatedAt: Date;
+    url: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface ShoppingListItem {

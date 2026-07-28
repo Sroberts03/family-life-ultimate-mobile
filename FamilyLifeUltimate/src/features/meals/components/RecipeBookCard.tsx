@@ -1,8 +1,5 @@
 import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { RecipeBook } from '../meal.types';
-import { Feather } from '@expo/vector-icons';
-import usePermissions from '@/src/utils/UsePermissions';
-import { useState } from 'react';
 import RecipeEditActionButtons from './RecipeEditActionButtons';
 
 interface RecipeBookCardProps {
@@ -17,7 +14,6 @@ interface RecipeBookCardProps {
 export function RecipeBookCard({ recipeBook, onPress, setDeleteModal, setEditRecipeBookModal, setEditRecipeBookId, setEditRecipeBookName }: RecipeBookCardProps) {
     const { width } = useWindowDimensions();
     const cardWidth = (width - 24 - 16) / 2;
-    const canEditResult: boolean = usePermissions('recipes');
 
     const editRecipeBook = () => {
         setEditRecipeBookId(recipeBook.id);
@@ -63,7 +59,7 @@ export function RecipeBookCard({ recipeBook, onPress, setDeleteModal, setEditRec
                         </Text>
                         <RecipeEditActionButtons
                             setDeleteModal={deleteRecipeBook}
-                            setEditRecipeBookModal={editRecipeBook}
+                            setEditModal={editRecipeBook}
                             flexDirection={"column"}
                         />
                     </View>

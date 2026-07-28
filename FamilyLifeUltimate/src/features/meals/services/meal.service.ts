@@ -5,7 +5,8 @@ import { MealPlanItem, Recipe, RecipeBook } from "../meal.types";
 import { GetRecipeResDto } from "../dto/GetRecipeResDto";
 import GetRecipeBooksDto from "../dto/GetRecipeBooksDto";
 import { GetRecipesDto } from "../dto/GetRecipesDto";
-import { CreateRecipeBookReqDto, UpdateRecipeBookReqDto, UpdateRecipeBookResDto } from "../dto/CreateRecipeDto";
+import { UpdateRecipeReqDto, UpdateRecipeResDto } from "../dto/CreateRecipeDto";
+import { CreateRecipeBookReqDto, UpdateRecipeBookReqDto, UpdateRecipeBookResDto } from "../dto/CreateRecipeBookDto";
 
 export async function fetchMealPlans(familyId: string, date: string, session: Session): Promise<MealPlanItem[]> {
     const response: GetMealPlansDto = await HTTPRequest("GET", `meals/get-all-meal-plans-date?familyId=${familyId}&date=${date}`, true, session);
@@ -22,7 +23,7 @@ export async function fetchRecipeBooks(familyId: string, session: Session): Prom
     return response.recipeBooks;
 }
 
-export async function fetchRecipes(recipeBookId: string, session: Session): Promise<Recipe[]> {
+export async function fetchRecipes(recipeBookId: number, session: Session): Promise<Recipe[]> {
     const response: GetRecipesDto = await HTTPRequest("GET", `meals/get-recipes?recipeBookId=${recipeBookId}`, true, session);
     return response.recipes;
 }
@@ -40,5 +41,16 @@ export async function createRecipeBook(createReq: CreateRecipeBookReqDto, sessio
 export async function deleteRecipeBook(recipeBookId: number, session: Session): Promise<void> {
     await HTTPRequest("DELETE", `meals/delete-recipe-book?recipeBookId=${recipeBookId}`, true, session);
 }
+
+export async function createRecipe(req: UpdateRecipeReqDto, session: Session): Promise<Recipe> {
+    const response: UpdateRecipeResDto = await HTTPRequest("POST", `meals/create-recipe`, true, session, req);
+    return response.recipe;
+}
+
+export async function updateRecipe(req: UpdateRecipeReqDto, session: Session): Promise<Recipe> {
+    const response: UpdateRecipeResDto = await HTTPRequest("PUT", `meals/update-recipe`, true, session, req);
+    return response.recipe;
+}
+
 
     

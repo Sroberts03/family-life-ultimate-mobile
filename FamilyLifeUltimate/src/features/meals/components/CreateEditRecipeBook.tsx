@@ -10,7 +10,6 @@ import {
     Keyboard,
     Platform 
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import { saveRecipeBook, createRecipeBook } from "../services/meal.service";
 import { RecipeBook } from "../meal.types";

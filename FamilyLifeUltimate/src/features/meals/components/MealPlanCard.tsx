@@ -60,20 +60,6 @@ export default function MealPlanCard({ mealPlan }: Props) {
                     {mealPlan.name}
                 </Text>
             </View>
-
-            {/* Footer Action */}
-            {mealPlan.recipeId ? (
-                <View className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-                    <Link href={`/(meals)/recipes/${mealPlan.recipeId}`} asChild>
-                        <Pressable className="flex-row items-center justify-between px-5 py-3 active:bg-slate-100 dark:active:bg-slate-800">
-                            <Text className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                                View Recipe
-                            </Text>
-                            <Ionicons name="chevron-forward" size={16} color="#3b82f6" />
-                        </Pressable>
-                    </Link>
-                </View>
-            ) : null}
         </View>
     );
 }
