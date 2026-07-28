@@ -95,7 +95,11 @@ export default function MainMealScreen() {
                     <View className="flex-col gap-3 mb-32">
                         {mealPlans.length > 0 ? (
                             mealPlans.map((mealPlan) => (
-                                <MealPlanCard key={mealPlan.id} mealPlan={mealPlan} />
+                                <MealPlanCard 
+                                    key={mealPlan.id} 
+                                    mealPlan={mealPlan}
+                                    setError={setError}
+                                />
                             ))
                         ) : null}
                     </View>

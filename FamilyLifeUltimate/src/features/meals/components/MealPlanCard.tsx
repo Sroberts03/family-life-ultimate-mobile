@@ -1,13 +1,19 @@
-import { Link } from "expo-router";
 import { MealPlanItem } from "../meal.types";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, TouchableOpacity, Linking, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../auth/AuthContext";
+import { fetchRecipeDetail } from "../services/meal.service";
+import { useState } from "react";
 
 interface Props {
     mealPlan: MealPlanItem;
+    setError: (error: string) => void;
 }
 
-export default function MealPlanCard({ mealPlan }: Props) {
+export default function MealPlanCard({ mealPlan, setError }: Props) {
+    const { session } = useAuth(); 
+    const [loading, setLoading] = useState<boolean>(false);
+
     // Format the time safely to AM/PM
     let formattedTime = String(mealPlan.time);
     try {
@@ -37,6 +43,25 @@ export default function MealPlanCard({ mealPlan }: Props) {
         // Fallback to string if parsing fails
     }
 
+    const viewRecipeClicked = async () => {
+        if (!session || !mealPlan.recipeId) return;
+        setLoading(true);
+        setError("");
+        try {
+            const recipe = await fetchRecipeDetail(mealPlan.recipeId, session)
+            if (recipe?.url) {
+                const supported = await Linking.canOpenURL(recipe.url);
+                if (supported) {
+                    await Linking.openURL(recipe.url);
+                }
+            }
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to view recipe");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <View className="mb-4 overflow-hidden rounded-2xl bg-white shadow-sm border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
             <View className="p-5">
@@ -59,6 +84,24 @@ export default function MealPlanCard({ mealPlan }: Props) {
                 <Text className="text-xl font-bold text-slate-900 dark:text-white mb-1">
                     {mealPlan.name}
                 </Text>
+
+                <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                
+
+                    {mealPlan.recipeId ? (
+                        <TouchableOpacity className="flex-row items-center"
+                            onPress={() => viewRecipeClicked()}>
+                            {loading ? (
+                                <ActivityIndicator color="#64748b" size="small" />
+                            ) : (
+                                <Ionicons name="search-outline" size={20} color="#64748b" />
+                            )}
+                            <Text className="text-sm font-medium text-slate-500 dark:text-slate-400 ml-1">
+                                View Recipe
+                            </Text>
+                        </TouchableOpacity>
+                    ) : null}
+                </View>
             </View>
         </View>
     );
