@@ -14,15 +14,8 @@ interface RecipeBookCardProps {
     onPress: (recipeBookId: number) => void;
 }
 
-const formatName = (name: string) => {
-    return name.split(' ').map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-    }).join(' ');
-}
-
 export function RecipeBookCard({ recipeBook, onPress, setDeleteModal, setEditRecipeBookModal, setEditRecipeBookId, setEditRecipeBookName }: RecipeBookCardProps) {
     const { width } = useWindowDimensions();
-    // Assuming 2 columns, padding horizontally is 24 (12 * 2), gap is 16
     const cardWidth = (width - 24 - 16) / 2;
     const canEditResult: boolean = usePermissions('recipes');
 
@@ -30,6 +23,11 @@ export function RecipeBookCard({ recipeBook, onPress, setDeleteModal, setEditRec
         setEditRecipeBookId(recipeBook.id);
         setEditRecipeBookName(recipeBook.name);
         setEditRecipeBookModal(true);
+    }
+
+    const deleteRecipeBook = () => {
+        setDeleteModal(true);
+        setEditRecipeBookId(recipeBook.id);
     }
 
     return (
@@ -64,7 +62,7 @@ export function RecipeBookCard({ recipeBook, onPress, setDeleteModal, setEditRec
                             {recipeBook.name}
                         </Text>
                         <RecipeEditActionButtons
-                            setDeleteModal={setDeleteModal}
+                            setDeleteModal={deleteRecipeBook}
                             setEditRecipeBookModal={editRecipeBook}
                             flexDirection={"column"}
                         />

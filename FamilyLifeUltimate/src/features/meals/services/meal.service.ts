@@ -37,4 +37,8 @@ export async function createRecipeBook(createReq: CreateRecipeBookReqDto, sessio
     return response.recipeBook;
 }
 
+export async function deleteRecipeBook(recipeBookId: number, session: Session): Promise<void> {
+    await HTTPRequest("DELETE", `meals/delete-recipe-book?recipeBookId=${recipeBookId}`, true, session);
+}
+
     

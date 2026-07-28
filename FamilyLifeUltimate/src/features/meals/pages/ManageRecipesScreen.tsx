@@ -12,6 +12,7 @@ import BackButton from "@/src/globalComponents/BackButton";
 import { RelativePathString, router } from "expo-router";
 import usePermissions from "@/src/utils/UsePermissions";
 import CreateEditRecipeBook from "../components/CreateEditRecipeBook";
+import DeleteRecipeBookModal from "../components/DeleteRecipeBookModal";
 
 export default function ManageRecipesScreen() {
     const { session } = useAuth();
@@ -51,6 +52,11 @@ export default function ManageRecipesScreen() {
         setEditRecipeBook(true);
         setEditRecipeBookId(undefined);
         setEditRecipeBookName("");
+    } 
+
+    const deleteRecipeBookClicked = () => {
+        setDeleteModal(true);
+        setError("")
     }
 
     return (
@@ -72,7 +78,7 @@ export default function ManageRecipesScreen() {
                             key={recipeBook.id}
                             recipeBook={recipeBook}
                             onPress={recipeBookPressed}
-                            setDeleteModal={setDeleteModal}
+                            setDeleteModal={deleteRecipeBookClicked}
                             setEditRecipeBookModal={setEditRecipeBook}
                             setEditRecipeBookId={setEditRecipeBookId}
                             setEditRecipeBookName={setEditRecipeBookName}
@@ -94,6 +100,14 @@ export default function ManageRecipesScreen() {
                 name={editRecipeBookName}
                 setRecipeBooks={setRecipeBooks}
                 books={recipeBooks}
+            />
+            <DeleteRecipeBookModal
+                recipeBookId={editRecipeBookId}
+                showModal={deleteModal}
+                setShowModal={setDeleteModal}
+                recipeBooks={recipeBooks}
+                setRecipeBooks={setRecipeBooks}
+                setError={setError}
             />
         </View>
     );
