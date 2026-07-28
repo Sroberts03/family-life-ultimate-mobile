@@ -23,6 +23,13 @@ export default function RecipeEditActionButtons({ recipe, setDeleteModal, setEdi
         setEditModal(true);
     }
 
+    const recipeDelete = () => {
+        if (setSelectedRecipe) {
+            setSelectedRecipe(recipe);
+        }
+        setDeleteModal(true);
+    }
+
     if (flexDirection === "column") {
         return (
             <View>
@@ -79,7 +86,7 @@ export default function RecipeEditActionButtons({ recipe, setDeleteModal, setEdi
                             <Feather name="edit" size={18} color="#000000ff" />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => setDeleteModal(true)}
+                            onPress={recipeDelete}
                             className="px-4 py-2"
                         >
                             <Feather name="trash-2" size={18} color="#ff0000ff" />

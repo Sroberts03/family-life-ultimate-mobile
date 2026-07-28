@@ -52,5 +52,6 @@ export async function updateRecipe(req: UpdateRecipeReqDto, session: Session): P
     return response.recipe;
 }
 
-
-    
+export async function deleteRecipe(recipeId: number, session: Session): Promise<void> {
+    await HTTPRequest("DELETE", `meals/delete-recipe?recipeId=${recipeId}`, true, session);
+}

@@ -5,7 +5,6 @@ export default function FamilyManagerLayout() {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="ShoppingList" />
             <Stack.Screen name="ManageRecipes" />
-            <Stack.Screen name="NewRecipe" />
         </Stack>
     );
 }

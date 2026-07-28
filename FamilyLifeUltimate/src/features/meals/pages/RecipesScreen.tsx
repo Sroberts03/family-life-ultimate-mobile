@@ -10,6 +10,7 @@ import AddButton from "@/src/globalComponents/AddButton";
 import RecipePageCard from "../components/RecipePageCard";
 import usePermissions from "@/src/utils/UsePermissions";
 import UpdateRecipeModal from "../components/UpdateRecipeModal";
+import DeleteRecipeConfirmation from "../components/DeleteRecipeConfirmation";
 
 interface RecipesScreenProps {
     recipeBookId: number;
@@ -107,6 +108,14 @@ export default function RecipesScreen({ recipeBookId }: RecipesScreenProps) {
                 recipes={recipes}
                 setRecipes={setRecipes}
                 recipeBookId={recipeBookId}
+            />
+            <DeleteRecipeConfirmation
+                recipe={selectedRecipe!}
+                visible={deleteModal}
+                onDismiss={() => dismissModal()}
+                recipes={recipes}
+                setRecipes={setRecipes}
+                setError={setError}
             />
         </View>
     );
