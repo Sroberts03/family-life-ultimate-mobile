@@ -43,7 +43,8 @@ export default function DeleteRecipeBookModal({ recipeBookId, showModal, setShow
                     
                     <Text className="text-xl font-bold text-slate-900 text-center mb-2">Delete Recipe Book</Text>
                     <Text className="text-[15px] text-slate-500 text-center mb-4 leading-relaxed">
-                        Are you sure you want to delete this recipe book? This action cannot be undone.
+                        Are you sure you want to delete this recipe book? This action cannot be undone. This will also delete all associated
+                        recipes.
                     </Text>
 
                     <View className="w-full mt-2">
