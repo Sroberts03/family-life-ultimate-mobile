@@ -1,36 +1,30 @@
 import {
     Modal,
     Text,
-    TextInput,
     TouchableOpacity,
     View,
     TouchableWithoutFeedback,
     KeyboardAvoidingView,
     Keyboard,
-    Platform,
-    ScrollView
+    Platform,    
 } from "react-native";
 import { useAuth } from "../../auth/AuthContext";
 import { useFamily } from "../../family/FamilyContext";
 import { useEffect, useState } from "react";
 import { MealPlanItem, MealType, Recipe } from "../meal.types";
-import { createMealPlanItem, searchRecipesForFamily } from "../services/meal.service";
+import { createMealPlanItem, searchRecipesForFamily, updateMealPlanItem } from "../services/meal.service";
 import { MealNameInput } from "./MealNameInput";
 import { MealTypeSelector } from "./MealTypeSelector";
 import { TimePickerSelector } from "./TimePickerSelector";
 import { RecipeSearchPicker } from "./RecipeSearchPicker";
 
-interface Props {
-    visible: boolean;
-    setVisible: (visible: boolean) => void;
-    setError: (error: string) => void;
-    setMealPlans: (mealPlans: MealPlanItem[]) => void;
-    mealPlans: MealPlanItem[];
-    date: Date;
-}
-
-function organizePlans(oldPlans: MealPlanItem[], newPlan: MealPlanItem): MealPlanItem[] {
-    const newMealPlans: MealPlanItem[] = [...oldPlans, newPlan];
+function organizePlans(oldPlans: MealPlanItem[], newPlan: MealPlanItem, opperation: "add" | "edit"): MealPlanItem[] {
+    let newMealPlans: MealPlanItem[] = [];
+    if (opperation == "add") {
+        newMealPlans = [...oldPlans, newPlan];
+    } else {
+        newMealPlans = oldPlans.map((mealPlan) => mealPlan.id === newPlan.id ? newPlan : mealPlan);
+    }
     newMealPlans.sort((a, b) => {
         if (a.time < b.time) return -1;
         if (a.time > b.time) return 1;
@@ -39,10 +33,17 @@ function organizePlans(oldPlans: MealPlanItem[], newPlan: MealPlanItem): MealPla
     return newMealPlans;
 }
 
+interface Props {
+    visible: boolean;
+    setVisible: (visible: boolean) => void;
+    setError: (error: string) => void;
+    setMealPlans: (mealPlans: MealPlanItem[]) => void;
+    mealPlans: MealPlanItem[];
+    date: Date;
+    mealPlanItem?: MealPlanItem;
+}
 
-
-
-export default function CreateNewMealPlanItem({ visible, setVisible, setError, setMealPlans, mealPlans, date }: Props) {
+export default function CreateNewMealPlanItem({ visible, setVisible, setError, setMealPlans, mealPlans, date, mealPlanItem }: Props) {
     const { session } = useAuth();
     const { familyId } = useFamily();
     const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -61,6 +62,35 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
             setError(e instanceof Error ? e.message : "Failed to get recipes");
         }
     }
+
+    useEffect(() => {
+        if (visible) {
+            if (mealPlanItem) {
+                setName(mealPlanItem.name);
+                setMealType(mealPlanItem.mealType);
+                setRecipeId(mealPlanItem.recipeId || undefined);
+                
+                if (typeof mealPlanItem.time === 'string') {
+                    const [hours, minutes, seconds] = (mealPlanItem.time as string).split(':');
+                    const t = new Date(date.getTime());
+                    t.setHours(parseInt(hours, 10));
+                    t.setMinutes(parseInt(minutes, 10));
+                    t.setSeconds(parseInt(seconds || "0", 10));
+                    setTime(t);
+                } else if (mealPlanItem.time instanceof Date) {
+                    setTime(mealPlanItem.time);
+                } else {
+                    setTime(new Date(date.getTime()));
+                }
+            } else {
+                setName("");
+                setTime(new Date(date.getTime()));
+                setMealType(MealType.LUNCH);
+                setRecipeId(undefined);
+                setRecipeSearchQuery("");
+            }
+        }
+    }, [visible, mealPlanItem]);
 
     useEffect(() => {
         searchRecipes();
@@ -82,16 +112,31 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
             const minutes = time.getMinutes().toString().padStart(2, '0');
             const seconds = time.getSeconds().toString().padStart(2, '0');
             const formattedTime = `${hours}:${minutes}:${seconds}`;
+            
+            let mealPlan: MealPlanItem;
 
-            const mealPlan = await createMealPlanItem({ 
-                familyId, 
-                mealType, 
-                name: name.trim(), 
-                recipeId, 
-                date: formattedDate, 
-                time: formattedTime 
-            }, session);
-            setMealPlans(organizePlans(mealPlans, mealPlan));
+            if (!mealPlanItem) {
+                mealPlan = await createMealPlanItem({ 
+                    familyId, 
+                    mealType, 
+                    name: name.trim(), 
+                    recipeId, 
+                    date: formattedDate, 
+                    time: formattedTime 
+                }, session);
+                setMealPlans(organizePlans(mealPlans, mealPlan, "add"));
+            } else {
+                mealPlan = await updateMealPlanItem({ 
+                    mealPlanItemId: mealPlanItem.id,
+                    familyId, 
+                    mealType, 
+                    name: name.trim(), 
+                    recipeId, 
+                    date: formattedDate, 
+                    time: formattedTime 
+                }, session);
+                setMealPlans(organizePlans(mealPlans, mealPlan, "edit"));
+            }
             reset();
         } catch (e) {
             setError(e instanceof Error ? e.message : "Failed to create meal plan");
@@ -135,7 +180,7 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
                         <View className="bg-white rounded-3xl p-6 w-full max-h-[90vh] shadow-xl">
                             <View className="flex-row justify-between items-center mb-6">
                                 <Text className="text-2xl font-bold text-gray-800">
-                                    New meal plan
+                                    {mealPlanItem ? "Edit meal plan" : "New meal plan"}
                                 </Text>
                             </View>
 
@@ -164,7 +209,7 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
                                     className={`flex-1 py-4 rounded-xl items-center justify-center ${name.trim() ? 'bg-blue-600' : 'bg-blue-400'}`}
                                     disabled={!name.trim()}
                                 >
-                                    <Text className="text-white font-bold text-base">Create</Text>
+                                    <Text className="text-white font-bold text-base">{mealPlanItem ? 'Update' : 'Create'}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

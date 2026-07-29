@@ -29,6 +29,10 @@ export default function MainMealScreen() {
     const [today, setToday] = useState<Date>(new Date());
     const [createMealPlan, setCreateMealPlan] = useState<boolean>(false);
     const [mealPlans, setMealPlans] = useState<MealPlanItem[]>([]);
+    const [editMealPlan, setEditMealPlan] = useState<boolean>(false);
+    const [editMealPlanItem, setEditMealPlanItem] = useState<MealPlanItem | undefined>(undefined);
+    const [deleteMealPlan, setDeleteMealPlan] = useState<boolean>(false);
+    
 
     async function loadMealPlans() {
         if (!familyId || !session) return;
@@ -57,9 +61,11 @@ export default function MainMealScreen() {
     const editDelete = (operation: "edit" | "delete", mealPlan: MealPlanItem) => {
         if (!session || !familyId) return;
         if (operation === "edit") {
-            console.log("meal plan editing needs to be implemented")
+            setEditMealPlanItem(mealPlan);
+            setEditMealPlan(true);
         } else if (operation === "delete") {
-            console.log("meal plan deletion needs to be implemented")
+            setEditMealPlanItem(mealPlan);
+            setDeleteMealPlan(true);
         }
     }
 
@@ -135,6 +141,15 @@ export default function MainMealScreen() {
                 setMealPlans={setMealPlans}
                 mealPlans={mealPlans}
                 date={date}
+            />
+            <CreateNewMealPlanItem
+                visible={editMealPlan}
+                setVisible={setEditMealPlan}
+                setError={setError}
+                setMealPlans={setMealPlans}
+                mealPlans={mealPlans}
+                date={date}
+                mealPlanItem={editMealPlanItem}
             />
         </View>
     );
