@@ -66,3 +66,8 @@ export async function fetchAllRecipesForFamily(familyId: string, session: Sessio
     const response: GetRecipesDto = await HTTPRequest("GET", `meals/get-all-recipes-for-family?familyId=${familyId}`, true, session);
     return response.recipes;
 }
+
+export async function searchRecipesForFamily(familyId: string, searchQuery: string, session: Session): Promise<Recipe[]> {
+    const response: GetRecipesDto = await HTTPRequest("GET", `meals/search-recipes-for-family?familyId=${familyId}&searchQuery=${searchQuery}`, true, session);
+    return response.recipes;
+}

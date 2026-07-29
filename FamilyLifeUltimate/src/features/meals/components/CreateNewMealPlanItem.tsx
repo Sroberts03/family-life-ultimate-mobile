@@ -14,8 +14,11 @@ import { useAuth } from "../../auth/AuthContext";
 import { useFamily } from "../../family/FamilyContext";
 import { useEffect, useState } from "react";
 import { MealPlanItem, MealType, Recipe } from "../meal.types";
-import { createMealPlanItem, fetchAllRecipesForFamily } from "../services/meal.service";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { createMealPlanItem, searchRecipesForFamily } from "../services/meal.service";
+import { MealNameInput } from "./MealNameInput";
+import { MealTypeSelector } from "./MealTypeSelector";
+import { TimePickerSelector } from "./TimePickerSelector";
+import { RecipeSearchPicker } from "./RecipeSearchPicker";
 
 interface Props {
     visible: boolean;
@@ -26,19 +29,33 @@ interface Props {
     date: Date;
 }
 
+function organizePlans(oldPlans: MealPlanItem[], newPlan: MealPlanItem): MealPlanItem[] {
+    const newMealPlans: MealPlanItem[] = [...oldPlans, newPlan];
+    newMealPlans.sort((a, b) => {
+        if (a.time < b.time) return -1;
+        if (a.time > b.time) return 1;
+        return 0;
+    });
+    return newMealPlans;
+}
+
+
+
+
 export default function CreateNewMealPlanItem({ visible, setVisible, setError, setMealPlans, mealPlans, date }: Props) {
     const { session } = useAuth();
     const { familyId } = useFamily();
     const [recipes, setRecipes] = useState<Recipe[]>([])
+    const [recipeSearchQuery, setRecipeSearchQuery] = useState<string>("")
     const [name, setName] = useState<string>("");
     const [time, setTime] = useState<Date>(new Date(date.getTime()));
     const [mealType, setMealType] = useState<MealType>(MealType.LUNCH);
     const [recipeId, setRecipeId] = useState<number | undefined>(undefined);
 
-    const loadRecipes = async () => {
+    const searchRecipes = async () => {
         if (!familyId || !session) return;
         try {
-            const recipes = await fetchAllRecipesForFamily(familyId, session);
+            const recipes = await searchRecipesForFamily(familyId, recipeSearchQuery, session);
             setRecipes(recipes);
         } catch (e) {
             setError(e instanceof Error ? e.message : "Failed to get recipes");
@@ -46,8 +63,8 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
     }
 
     useEffect(() => {
-        loadRecipes();
-    }, [familyId])
+        searchRecipes();
+    }, [recipeSearchQuery])
 
     if (!session || !visible) return null;
 
@@ -74,7 +91,7 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
                 date: formattedDate, 
                 time: formattedTime 
             }, session);
-            setMealPlans([...mealPlans, mealPlan]);
+            setMealPlans(organizePlans(mealPlans, mealPlan));
             reset();
         } catch (e) {
             setError(e instanceof Error ? e.message : "Failed to create meal plan");
@@ -89,14 +106,17 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
         setTime(new Date(date.getTime()));
         setMealType(MealType.LUNCH);
         setRecipeId(undefined);
+        setRecipeSearchQuery("");
         setVisible(false);
     }
 
     const mealTypes = [
-        { label: 'Breakfast', value: MealType.BREAKFAST },
-        { label: 'Lunch', value: MealType.LUNCH },
-        { label: 'Dinner', value: MealType.DINNER },
-        { label: 'Snack', value: MealType.SNACK },
+        { label: 'Breakfast', value: MealType.BREAKFAST, icon: 'sunrise', family: 'Feather' },
+        { label: 'Lunch', value: MealType.LUNCH, icon: 'sun', family: 'Feather' },
+        { label: 'Dinner', value: MealType.DINNER, icon: 'moon', family: 'Feather' },
+        { label: 'Snack', value: MealType.SNACK, icon: 'coffee', family: 'Feather' },
+        { label: 'Dessert', value: MealType.DESSERT, icon: 'cookie', family: 'MaterialCommunityIcons' },
+        { label: 'Other', value: MealType.OTHER, icon: 'more-horizontal', family: 'Feather' },
     ];
 
     return (
@@ -115,111 +135,33 @@ export default function CreateNewMealPlanItem({ visible, setVisible, setError, s
                         <View className="bg-white rounded-3xl p-6 w-full max-h-[90vh] shadow-xl">
                             <View className="flex-row justify-between items-center mb-6">
                                 <Text className="text-2xl font-bold text-gray-800">
-                                    New Meal Plan
+                                    New meal plan
                                 </Text>
                             </View>
 
-                            <View className="flex-col gap-5 pb-8">
-                                {/* Name Input */}
-                                <View>
-                                    <Text className="text-sm font-medium text-gray-700 mb-1.5 ml-1">Meal Name*</Text>
-                                    <TextInput
-                                        className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800"
-                                        placeholder="e.g. Taco Tuesday"
-                                        value={name}
-                                        onChangeText={setName}
-                                        placeholderTextColor="#9ca3af"
-                                    />
-                                </View>
-
-                                {/* Meal Type Selection */}
-                                <View>
-                                    <Text className="text-sm font-medium text-gray-700 mb-1.5 ml-1">Meal Type</Text>
-                                    <View className="flex-row flex-wrap gap-2">
-                                        {mealTypes.map((type) => (
-                                            <TouchableOpacity
-                                                key={type.value}
-                                                onPress={() => setMealType(type.value)}
-                                                className={`px-4 py-2 rounded-full border ${mealType === type.value
-                                                        ? 'bg-blue-600 border-blue-600'
-                                                        : 'bg-white border-gray-200'
-                                                    }`}
-                                            >
-                                                <Text className={`font-medium ${mealType === type.value ? 'text-white' : 'text-gray-600'
-                                                    }`}>
-                                                    {type.label}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        ))}
-                                    </View>
-                                </View>
-
-                                {/* Time Picker */}
-                                <View>
-                                    <Text className="text-sm font-medium text-gray-700 mb-1.5 ml-1">Time</Text>
-                                    <View className="flex-row items-center">
-                                        <DateTimePicker
-                                            value={time}
-                                            mode="time"
-                                            display="default"
-                                            onChange={(event, selectedDate) => {
-                                                if (selectedDate) setTime(selectedDate);
-                                            }}
-                                            style={{ alignSelf: 'flex-start' }}
-                                        />
-                                    </View>
-                                </View>
-
-                                {/* Recipe Picker */}
-                                <View>
-                                    <Text className="text-sm font-medium text-gray-700 mb-1.5 ml-1">Recipe (Optional)</Text>
-                                    <ScrollView
-                                        horizontal
-                                        showsHorizontalScrollIndicator={false}
-                                        className="flex-row"
-                                    >
-                                        <TouchableOpacity
-                                            onPress={() => setRecipeId(undefined)}
-                                            className={`px-4 py-2 mr-2 rounded-full border ${recipeId === undefined
-                                                    ? 'bg-blue-600 border-blue-600'
-                                                    : 'bg-white border-gray-200'
-                                                }`}
-                                        >
-                                            <Text className={`font-medium ${recipeId === undefined ? 'text-white' : 'text-gray-600'
-                                                }`}>
-                                                None
-                                            </Text>
-                                        </TouchableOpacity>
-
-                                        {recipes.map((r) => (
-                                            <TouchableOpacity
-                                                key={r.id}
-                                                onPress={() => setRecipeId(r.id)}
-                                                className={`px-4 py-2 mr-2 rounded-full border ${recipeId === r.id
-                                                        ? 'bg-blue-600 border-blue-600'
-                                                        : 'bg-white border-gray-200'
-                                                    }`}
-                                            >
-                                                <Text className={`font-medium ${recipeId === r.id ? 'text-white' : 'text-gray-600'
-                                                    }`}>
-                                                    {r.name}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        ))}
-                                    </ScrollView>
-                                </View>
+                            <View className="flex-col gap-6 pb-8">
+                                <MealNameInput name={name} setName={setName} />
+                                <MealTypeSelector mealType={mealType} setMealType={setMealType} mealTypes={mealTypes} />
+                                <TimePickerSelector time={time} setTime={setTime} />
+                                <RecipeSearchPicker 
+                                    recipeId={recipeId}
+                                    setRecipeId={setRecipeId}
+                                    recipes={recipes}
+                                    recipeSearchQuery={recipeSearchQuery}
+                                    setRecipeSearchQuery={setRecipeSearchQuery}
+                                />
                             </View>
 
                             <View className="flex-row mt-2 gap-3 pt-4 border-t border-gray-100">
                                 <TouchableOpacity
                                     onPress={reset}
-                                    className="flex-1 py-4 rounded-xl bg-gray-100 items-center justify-center"
+                                    className="flex-1 py-4 rounded-xl bg-white border border-gray-200 items-center justify-center"
                                 >
                                     <Text className="text-gray-700 font-bold text-base">Cancel</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={onSave}
-                                    className={`flex-1 py-4 rounded-xl items-center justify-center ${name.trim() ? 'bg-blue-600' : 'bg-blue-300'}`}
+                                    className={`flex-1 py-4 rounded-xl items-center justify-center ${name.trim() ? 'bg-blue-600' : 'bg-blue-400'}`}
                                     disabled={!name.trim()}
                                 >
                                     <Text className="text-white font-bold text-base">Create</Text>
