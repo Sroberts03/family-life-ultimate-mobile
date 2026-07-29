@@ -73,6 +73,11 @@ export async function searchRecipesForFamily(familyId: string, searchQuery: stri
     return response.recipes;
 }
 
+export async function searchRecipes(recipeBookId: number, searchQuery: string, session: Session): Promise<Recipe[]> {
+    const response: GetRecipesDto = await HTTPRequest("GET", `meals/search-recipes?recipeBookId=${recipeBookId}&searchQuery=${searchQuery}`, true, session);
+    return response.recipes;
+}
+
 export async function updateMealPlanItem(req: UpdateMealPlanItemReq, session: Session): Promise<MealPlanItem> {
     const response: UpdateMealPlanItemRes = await HTTPRequest("PUT", `meals/update-meal-plan-item`, true, session, req);
     return response.mealPlanItem;

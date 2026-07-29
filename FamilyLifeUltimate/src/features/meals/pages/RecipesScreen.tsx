@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ScrollView, Text, View, Linking, Alert } from "react-native";
 import { Recipe } from "../meal.types";
-import { fetchRecipes } from "../services/meal.service";
+import { fetchRecipes, searchRecipes } from "../services/meal.service";
 import { useAuth } from "../../auth/AuthContext";
 import ScreenHeader from "@/src/globalComponents/ScreenHeader";
 import BackButton from "@/src/globalComponents/BackButton";
@@ -11,6 +11,7 @@ import RecipePageCard from "../components/RecipePageCard";
 import usePermissions from "@/src/utils/UsePermissions";
 import UpdateRecipeModal from "../components/UpdateRecipeModal";
 import DeleteRecipeConfirmation from "../components/DeleteRecipeConfirmation";
+import RecipeSearch from "../components/RecipeSearch";
 
 interface RecipesScreenProps {
     recipeBookId: number;
@@ -24,6 +25,7 @@ export default function RecipesScreen({ recipeBookId }: RecipesScreenProps) {
     const [editModal, setEditModal] = useState<boolean>(false);
     const [deleteModal, setDeleteModal] = useState<boolean>(false);
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(undefined);
+    const [searchParam, setSearchParam] = useState<string>("");
     const canEditResult: boolean = usePermissions('recipes');
 
     async function loadRecipes() {
@@ -78,6 +80,14 @@ export default function RecipesScreen({ recipeBookId }: RecipesScreenProps) {
                 "
             />
             <ErrorLoading error={error} loading={loading} />
+            <RecipeSearch
+                recipeBookId={recipeBookId}
+                searchParam={searchParam}
+                setSearchParam={setSearchParam}
+                setRecipes={setRecipes}
+                setError={setError}
+                loadRecipes={loadRecipes}
+            />
             <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
                 <View className="mt-3">
                     {recipes.length === 0 ? (
