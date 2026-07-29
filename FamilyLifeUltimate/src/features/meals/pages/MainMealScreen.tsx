@@ -16,6 +16,7 @@ import { toLocalDateString } from "@/src/utils/toLocaleDateString";
 import MealPlanCard from "../components/MealPlanCard";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import usePermissions from "@/src/utils/UsePermissions";
+import CreateNewMealPlanItem from "../components/CreateNewMealPlanItem";
 
 export default function MainMealScreen() {
     const { session } = useAuth();
@@ -51,6 +52,15 @@ export default function MainMealScreen() {
 
     const manageButtonClicked = (pathName: RelativePathString, params: any) => {
         router.push({ pathname: pathName, params: params })
+    }
+
+    const editDelete = (operation: "edit" | "delete", mealPlan: MealPlanItem) => {
+        if (!session || !familyId) return;
+        if (operation === "edit") {
+            console.log("meal plan editing needs to be implemented")
+        } else if (operation === "delete") {
+            console.log("meal plan deletion needs to be implemented")
+        }
     }
 
     return (
@@ -99,6 +109,7 @@ export default function MainMealScreen() {
                                     key={mealPlan.id} 
                                     mealPlan={mealPlan}
                                     setError={setError}
+                                    editDelete={editDelete}
                                 />
                             ))
                         ) : null}
@@ -116,6 +127,14 @@ export default function MainMealScreen() {
                 containerClassname="bg-blue-100 rounded-full absolute bottom-28 right-4 w-16 h-16 flex items-center justify-center shadow shadow-sm"
                 onPress={() => { setCreateMealPlan(true) }}
                 isVisible={canAddMealPlansResult}
+            />
+            <CreateNewMealPlanItem
+                visible={createMealPlan}
+                setVisible={setCreateMealPlan}
+                setError={setError}
+                setMealPlans={setMealPlans}
+                mealPlans={mealPlans}
+                date={date}
             />
         </View>
     );

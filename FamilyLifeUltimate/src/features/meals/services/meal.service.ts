@@ -7,6 +7,7 @@ import GetRecipeBooksDto from "../dto/GetRecipeBooksDto";
 import { GetRecipesDto } from "../dto/GetRecipesDto";
 import { UpdateRecipeReqDto, UpdateRecipeResDto } from "../dto/CreateRecipeDto";
 import { CreateRecipeBookReqDto, UpdateRecipeBookReqDto, UpdateRecipeBookResDto } from "../dto/CreateRecipeBookDto";
+import { CreateMealPlanItemReq, CreateMealPlanItemRes } from "../dto/MealPlanDto";
 
 export async function fetchMealPlans(familyId: string, date: string, session: Session): Promise<MealPlanItem[]> {
     const response: GetMealPlansDto = await HTTPRequest("GET", `meals/get-all-meal-plans-date?familyId=${familyId}&date=${date}`, true, session);
@@ -54,4 +55,14 @@ export async function updateRecipe(req: UpdateRecipeReqDto, session: Session): P
 
 export async function deleteRecipe(recipeId: number, session: Session): Promise<void> {
     await HTTPRequest("DELETE", `meals/delete-recipe?recipeId=${recipeId}`, true, session);
+}
+
+export async function createMealPlanItem(req: CreateMealPlanItemReq, session: Session): Promise<MealPlanItem> {
+    const response: CreateMealPlanItemRes = await HTTPRequest("POST", `meals/create-meal-plan-item`, true, session, req);
+    return response.mealPlan;
+}
+
+export async function fetchAllRecipesForFamily(familyId: string, session: Session): Promise<Recipe[]> {
+    const response: GetRecipesDto = await HTTPRequest("GET", `meals/get-all-recipes-for-family?familyId=${familyId}`, true, session);
+    return response.recipes;
 }

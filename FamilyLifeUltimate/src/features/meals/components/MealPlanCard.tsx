@@ -1,17 +1,20 @@
 import { MealPlanItem } from "../meal.types";
 import { View, Text, TouchableOpacity, Linking, ActivityIndicator } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../auth/AuthContext";
 import { fetchRecipeDetail } from "../services/meal.service";
 import { useState } from "react";
+import usePermissions from "@/src/utils/UsePermissions";
 
 interface Props {
     mealPlan: MealPlanItem;
     setError: (error: string) => void;
+    editDelete: (operation: "edit" | "delete", mealPlan: MealPlanItem) => void
 }
 
-export default function MealPlanCard({ mealPlan, setError }: Props) {
-    const { session } = useAuth(); 
+export default function MealPlanCard({ mealPlan, setError, editDelete }: Props) {
+    const { session, user } = useAuth();
+    const userCanEdit: boolean = usePermissions('meal');
     const [loading, setLoading] = useState<boolean>(false);
 
     // Format the time safely to AM/PM
@@ -86,8 +89,6 @@ export default function MealPlanCard({ mealPlan, setError }: Props) {
                 </Text>
 
                 <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                
-
                     {mealPlan.recipeId ? (
                         <TouchableOpacity className="flex-row items-center"
                             onPress={() => viewRecipeClicked()}>
@@ -101,6 +102,17 @@ export default function MealPlanCard({ mealPlan, setError }: Props) {
                             </Text>
                         </TouchableOpacity>
                     ) : null}
+
+                    {userCanEdit && (
+                        <View className="flex-row items-center gap-3 ml-2">
+                            <TouchableOpacity onPress={() => editDelete("edit", mealPlan)} className="p-2 bg-blue-50 rounded-full">
+                                <Feather name="edit-2" size={16} color="#3B82F6" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => editDelete("delete", mealPlan)} className="p-2 bg-red-50 rounded-full">
+                                <Feather name="trash-2" size={16} color="#EF4444" />
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
             </View>
         </View>
