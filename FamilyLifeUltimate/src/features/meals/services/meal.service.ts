@@ -82,3 +82,7 @@ export async function updateMealPlanItem(req: UpdateMealPlanItemReq, session: Se
     const response: UpdateMealPlanItemRes = await HTTPRequest("PUT", `meals/update-meal-plan-item`, true, session, req);
     return response.mealPlanItem;
 }
+
+export async function deleteMealPlan(mealPlanId: number, session: Session): Promise<void> {
+    await HTTPRequest("DELETE", `meals/delete-meal-plan?mealPlanId=${mealPlanId}`, true, session);
+}

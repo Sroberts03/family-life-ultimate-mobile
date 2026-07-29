@@ -17,6 +17,7 @@ import MealPlanCard from "../components/MealPlanCard";
 import ErrorLoading from "@/src/globalComponents/ErrorLoading";
 import usePermissions from "@/src/utils/UsePermissions";
 import CreateNewMealPlanItem from "../components/CreateNewMealPlanItem";
+import DeleteMealPlanConfirmation from "../components/DeleteMealPlanConfirmation";
 
 export default function MainMealScreen() {
     const { session } = useAuth();
@@ -61,9 +62,11 @@ export default function MainMealScreen() {
     const editDelete = (operation: "edit" | "delete", mealPlan: MealPlanItem) => {
         if (!session || !familyId) return;
         if (operation === "edit") {
+            setError("");
             setEditMealPlanItem(mealPlan);
             setEditMealPlan(true);
         } else if (operation === "delete") {
+            setError("");
             setEditMealPlanItem(mealPlan);
             setDeleteMealPlan(true);
         }
@@ -150,6 +153,14 @@ export default function MainMealScreen() {
                 mealPlans={mealPlans}
                 date={date}
                 mealPlanItem={editMealPlanItem}
+            />
+            <DeleteMealPlanConfirmation
+                mealPlan={editMealPlanItem}
+                showModal={deleteMealPlan}
+                setShowModal={setDeleteMealPlan}
+                mealPlans={mealPlans}
+                setMealPlans={setMealPlans}
+                setError={setError}
             />
         </View>
     );
