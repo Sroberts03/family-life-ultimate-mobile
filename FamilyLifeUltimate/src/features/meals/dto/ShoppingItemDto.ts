@@ -1,7 +1,7 @@
 import { ShoppingListItem } from "../meal.types";
 
 export interface CreateShoppingItemReq {
-    familyId: number;
+    familyId: string;
     quantity: number;
     unit: string;
     item: string;
@@ -13,11 +13,9 @@ export interface CreateShoppingResDto {
 
 export interface UpdateShoppingItemReq {
     id: number;
-    familyId: number;
     quantity: number;
     unit: string;
     item: string;
-    purchased: boolean;
 }
 
 export interface UpdateShoppingResDto {

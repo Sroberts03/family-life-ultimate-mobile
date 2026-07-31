@@ -7,10 +7,11 @@ import { useEffect, useState } from "react";
 import AddButton from "@/src/globalComponents/AddButton";
 import usePermissions from "@/src/utils/UsePermissions";
 import { useFamily } from "../../family/FamilyContext";
-import { deleteShoppingItem, getShoppingList, toggleItemPurchased } from "../services/meal.service";
+import { createShoppingItem, deleteShoppingItem, editShoppingItem, getShoppingList, toggleItemPurchased } from "../services/meal.service";
 import { ShoppingListItem } from "../meal.types";
 import ShoppingListItemCard from "../components/ShoppingListItem";
 import DeleteShoppingModal from "../components/DeleteShoppingModal";
+import UpdateShoppingListItems from "../components/UpdateShoppingListItems";
 
 const organizeItems = (shoppingItems: Record<number, ShoppingListItem>) => {
     return Object.values(shoppingItems).sort((a, b) => {
@@ -114,13 +115,53 @@ export default function ShoppingListScreen() {
         setEditItem(true);
     }
 
-    const confirmEdit = () => {
-
+    const confirmEdit = async (id: number, quantity: number, unit: string, item: string) => {
+        if (!session || !selectedItem) return;
+        try {
+            await editShoppingItem({id, quantity,unit,item}, session)
+            setShoppingItems((prevItems) => {
+                const newItem = { ...prevItems[id] };
+                newItem.quantity = quantity;
+                newItem.unit = unit;
+                newItem.item = item;
+                newItem.updatedAt = new Date();
+                return { ...prevItems, [id]: newItem };
+            });
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to get recipes");
+        } finally {
+            setEditItem(false);
+            setSelectedItem(null);
+        }
     }
 
     const cancelEdit = () => {
         setEditItem(false);
         setSelectedItem(null);
+    }
+
+    const addPressed = () => {
+        setError("");
+        setSelectedItem(null);
+        setAddItem(true);
+    }
+
+    const confirmAdd = async (familyId: string, quantity: number, unit: string, item: string) => {
+        if (!session) return;
+        try {
+            const newItem = await createShoppingItem({familyId, quantity,unit,item}, session)
+            setShoppingItems((prevItems) => { 
+                return { ...prevItems, [newItem.id]: newItem };
+            });
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to get recipes");
+        } finally {
+            setAddItem(false)
+        }
+    }
+
+    const cancelAdd = () => {
+        setAddItem(false);
     }
 
     return (
@@ -149,7 +190,7 @@ export default function ShoppingListScreen() {
                 ))}
             </ScrollView>
             <AddButton
-                onPress={() => { setAddItem(true) }}
+                onPress={addPressed}
                 isVisible={canEditShopping}
                 containerClassname="bg-blue-100 rounded-full absolute bottom-1 right-5 w-16 h-16 flex items-center justify-center shadow shadow-sm"
             />
@@ -158,6 +199,17 @@ export default function ShoppingListScreen() {
                 onConfirm={confirmDelete}
                 onCancel={cancelDelete}
                 item={selectedItem!}
+            />
+            <UpdateShoppingListItems
+                isVisible={addItem}
+                onConfirmCreate={confirmAdd}
+                onCancel={cancelAdd}
+            />
+            <UpdateShoppingListItems
+                isVisible={editItem}
+                onConfirmEdit={confirmEdit}
+                onCancel={cancelEdit}
+                shoppingItem={selectedItem!}
             />
         </View>
     );

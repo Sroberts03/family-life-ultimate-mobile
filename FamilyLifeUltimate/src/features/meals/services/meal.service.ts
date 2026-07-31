@@ -9,7 +9,7 @@ import { UpdateRecipeReqDto, UpdateRecipeResDto } from "../dto/CreateRecipeDto";
 import { CreateRecipeBookReqDto, UpdateRecipeBookReqDto, UpdateRecipeBookResDto } from "../dto/CreateRecipeBookDto";
 import { CreateMealPlanItemReq, CreateMealPlanItemRes } from "../dto/MealPlanDto";
 import { UpdateMealPlanItemReq, UpdateMealPlanItemRes } from "../dto/UpdateMealPlanItemDto";
-import { GetShoppingListResDto } from "../dto/ShoppingItemDto";
+import { CreateShoppingItemReq, GetShoppingListResDto, UpdateShoppingItemReq, UpdateShoppingResDto } from "../dto/ShoppingItemDto";
 
 export async function fetchMealPlans(familyId: string, date: string, session: Session): Promise<MealPlanItem[]> {
     const response: GetMealPlansDto = await HTTPRequest("GET", `meals/get-all-meal-plans-date?familyId=${familyId}&date=${date}`, true, session);
@@ -99,4 +99,13 @@ export async function toggleItemPurchased(itemId: number, session: Session): Pro
 
 export async function deleteShoppingItem(itemId: number, session: Session): Promise<void> {
     await HTTPRequest("DELETE", `meals/delete-item?itemId=${itemId}`, true, session);
+}
+
+export async function editShoppingItem(req: UpdateShoppingItemReq, session: Session): Promise<void> {
+    await HTTPRequest("PUT", `meals/update-item`, true, session, req);
+}
+
+export async function createShoppingItem(req: CreateShoppingItemReq, session: Session): Promise<ShoppingListItem> {
+    const response: UpdateShoppingResDto = await HTTPRequest("POST", `meals/create-item`, true, session, req);
+    return response.shoppingItem;
 }
