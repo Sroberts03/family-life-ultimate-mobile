@@ -96,3 +96,7 @@ export async function getShoppingList(familyId: string, session: Session): Promi
 export async function toggleItemPurchased(itemId: number, session: Session): Promise<void> {
     await HTTPRequest("PUT", `meals/toggle-item-purchased?itemId=${itemId}`, true, session);
 }
+
+export async function deleteShoppingItem(itemId: number, session: Session): Promise<void> {
+    await HTTPRequest("DELETE", `meals/delete-item?itemId=${itemId}`, true, session);
+}

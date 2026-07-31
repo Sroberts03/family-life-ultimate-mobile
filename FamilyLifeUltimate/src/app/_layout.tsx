@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 import { FamilyProvider } from "../features/family/FamilyContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -55,12 +56,14 @@ function IntialLayout() {
 
 export default function RootLayout() {
     return (
-        <SafeAreaView className="flex-1 bg-background">
-            <AuthProvider>
-                <FamilyProvider>
-                    <IntialLayout />
-                </FamilyProvider>
-            </AuthProvider>
-        </SafeAreaView>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaView className="flex-1 bg-background">
+                <AuthProvider>
+                    <FamilyProvider>
+                        <IntialLayout />
+                    </FamilyProvider>
+                </AuthProvider>
+            </SafeAreaView>
+        </GestureHandlerRootView>
     )
 }

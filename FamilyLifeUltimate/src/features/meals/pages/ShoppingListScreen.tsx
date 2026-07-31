@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import AddButton from "@/src/globalComponents/AddButton";
 import usePermissions from "@/src/utils/UsePermissions";
 import { useFamily } from "../../family/FamilyContext";
-import { getShoppingList, toggleItemPurchased } from "../services/meal.service";
+import { deleteShoppingItem, getShoppingList, toggleItemPurchased } from "../services/meal.service";
 import { ShoppingListItem } from "../meal.types";
 import ShoppingListItemCard from "../components/ShoppingListItem";
+import DeleteShoppingModal from "../components/DeleteShoppingModal";
 
 const organizeItems = (shoppingItems: Record<number, ShoppingListItem>) => {
     return Object.values(shoppingItems).sort((a, b) => {
@@ -41,6 +42,9 @@ export default function ShoppingListScreen() {
     const [error, setError] = useState<string>("");
     const [addItem, setAddItem] = useState<boolean>(false);
     const [shoppingItems, setShoppingItems] = useState<Record<number, ShoppingListItem>>({});
+    const [editItem, setEditItem] = useState<boolean>(false);
+    const [deleteItem, setDeleteItem] = useState<boolean>(false);
+    const [selectedItem, setSelectedItem] = useState<ShoppingListItem | null>(null);
 
     const loadItems = async () => {
         if (!session || !familyId) return;
@@ -61,6 +65,7 @@ export default function ShoppingListScreen() {
 
     const togglePurchased = async (itemId: number) => {
         if (!session) return;
+        setError("");
         try {
             await toggleItemPurchased(itemId, session);
             setShoppingItems((prevItems) => {
@@ -72,6 +77,50 @@ export default function ShoppingListScreen() {
         } catch (e) {
             setError(e instanceof Error ? e.message : "Failed to get recipes");
         }
+    }
+
+    const deletePressed = (itemId: number) => {
+        setError("")
+        const item = shoppingItems[itemId];
+        setSelectedItem(item);
+        setDeleteItem(true);
+    }
+
+    const confirmDelete = async () => {
+        if (!session || !selectedItem) return;
+        try {
+            await deleteShoppingItem(selectedItem.id, session);
+            setShoppingItems((prevItems) => {
+                const { [selectedItem.id]: deletedItem, ...rest } = prevItems;
+                return rest;
+            });
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Failed to get recipes");
+        } finally {
+            setDeleteItem(false);
+            setSelectedItem(null);
+        }
+    }
+
+    const cancelDelete = () => {
+        setDeleteItem(false);
+        setSelectedItem(null);
+    }
+
+    const editPressed = (itemId: number) => {
+        setError("")
+        const item = shoppingItems[itemId];
+        setSelectedItem(item);
+        setEditItem(true);
+    }
+
+    const confirmEdit = () => {
+
+    }
+
+    const cancelEdit = () => {
+        setEditItem(false);
+        setSelectedItem(null);
     }
 
     return (
@@ -94,6 +143,8 @@ export default function ShoppingListScreen() {
                         key={item.id}
                         shoppingItem={item}
                         onToggle={togglePurchased}
+                        onEdit={editPressed}
+                        onDelete={deletePressed}
                     />
                 ))}
             </ScrollView>
@@ -101,6 +152,12 @@ export default function ShoppingListScreen() {
                 onPress={() => { setAddItem(true) }}
                 isVisible={canEditShopping}
                 containerClassname="bg-blue-100 rounded-full absolute bottom-1 right-5 w-16 h-16 flex items-center justify-center shadow shadow-sm"
+            />
+            <DeleteShoppingModal
+                isVisible={deleteItem}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+                item={selectedItem!}
             />
         </View>
     );
