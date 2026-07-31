@@ -1,7 +1,7 @@
 import { Session } from "@supabase/supabase-js";
 import HTTPRequest from "../../../utils/baseHTTPRequest";
 import { GetMealPlansDto } from "../dto/GetMealPlansDto";
-import { MealPlanItem, Recipe, RecipeBook } from "../meal.types";
+import { MealPlanItem, Recipe, RecipeBook, ShoppingListItem } from "../meal.types";
 import { GetRecipeResDto } from "../dto/GetRecipeResDto";
 import GetRecipeBooksDto from "../dto/GetRecipeBooksDto";
 import { GetRecipesDto } from "../dto/GetRecipesDto";
@@ -9,6 +9,7 @@ import { UpdateRecipeReqDto, UpdateRecipeResDto } from "../dto/CreateRecipeDto";
 import { CreateRecipeBookReqDto, UpdateRecipeBookReqDto, UpdateRecipeBookResDto } from "../dto/CreateRecipeBookDto";
 import { CreateMealPlanItemReq, CreateMealPlanItemRes } from "../dto/MealPlanDto";
 import { UpdateMealPlanItemReq, UpdateMealPlanItemRes } from "../dto/UpdateMealPlanItemDto";
+import { GetShoppingListResDto } from "../dto/ShoppingItemDto";
 
 export async function fetchMealPlans(familyId: string, date: string, session: Session): Promise<MealPlanItem[]> {
     const response: GetMealPlansDto = await HTTPRequest("GET", `meals/get-all-meal-plans-date?familyId=${familyId}&date=${date}`, true, session);
@@ -85,4 +86,13 @@ export async function updateMealPlanItem(req: UpdateMealPlanItemReq, session: Se
 
 export async function deleteMealPlan(mealPlanId: number, session: Session): Promise<void> {
     await HTTPRequest("DELETE", `meals/delete-meal-plan?mealPlanId=${mealPlanId}`, true, session);
+}
+
+export async function getShoppingList(familyId: string, session: Session): Promise<Record<number, ShoppingListItem>> {
+    const response: GetShoppingListResDto = await HTTPRequest("GET", `meals/get-shopping-list?familyId=${familyId}`, true, session);
+    return response.shoppingItems;
+}
+
+export async function toggleItemPurchased(itemId: number, session: Session): Promise<void> {
+    await HTTPRequest("PUT", `meals/toggle-item-purchased?itemId=${itemId}`, true, session);
 }
