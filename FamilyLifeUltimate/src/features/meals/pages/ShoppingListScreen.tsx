@@ -16,6 +16,11 @@ const organizeItems = (shoppingItems: Record<number, ShoppingListItem>) => {
         if (a.purchased !== b.purchased) {
             return a.purchased ? 1 : -1;
         }
+        if (!a.purchased) {
+            const timeA = new Date(a.updatedAt).getTime();
+            const timeB = new Date(b.updatedAt).getTime();
+            return timeA - timeB;
+        }
         if (a.purchased) {
             // Both purchased: sort by most recently updated at the top
             const timeA = new Date(a.updatedAt).getTime();
