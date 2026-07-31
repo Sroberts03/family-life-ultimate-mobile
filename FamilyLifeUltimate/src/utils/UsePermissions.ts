@@ -23,8 +23,10 @@ export default function usePermissions(permissionCheck: string) {
             return user.activities.get(familyId)!.has("edit_chores");
         case "meal":
             return user.activities.get(familyId)!.has("edit_meals");
-        case "shopping":
+        case "viewShopping":
             return user.activities.get(familyId)!.has("view_shopping_list");
+        case "editShopping":
+            return user.activities.get(familyId)!.has("edit_shopping_list");
         case "recipes":
             return user.activities.get(familyId)!.has("edit_recipes");
         default:

@@ -23,7 +23,7 @@ export default function MainMealScreen() {
     const { session } = useAuth();
     const { familyId, memberFamilies, setFamilyId } = useFamily();
     const canAddMealPlansResult: boolean = usePermissions('meal')
-    const canViewShoppingListResult: boolean = usePermissions('shoppinglist')
+    const canViewShoppingListResult: boolean = usePermissions('viewShopping')
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [date, setDate] = useState<Date>(new Date());
@@ -34,7 +34,6 @@ export default function MainMealScreen() {
     const [editMealPlanItem, setEditMealPlanItem] = useState<MealPlanItem | undefined>(undefined);
     const [deleteMealPlan, setDeleteMealPlan] = useState<boolean>(false);
     
-
     async function loadMealPlans() {
         if (!familyId || !session) return;
         setLoading(true);

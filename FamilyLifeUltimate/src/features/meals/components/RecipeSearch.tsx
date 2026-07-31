@@ -1,6 +1,6 @@
 import { useAuth } from "@/src/features/auth/AuthContext";
 import { searchRecipes } from "../services/meal.service";
-import { TextInput, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import { Recipe } from "../meal.types";
 import { useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -33,6 +33,10 @@ export default function RecipeSearch({ searchParam, setSearchParam, loadRecipes,
         }
     }
 
+    function deleteQuery() {
+        setSearchParam("");
+    }
+
     useEffect(() => {
         search()
     }, [searchParam])
@@ -49,6 +53,11 @@ export default function RecipeSearch({ searchParam, setSearchParam, loadRecipes,
                     placeholderTextColor="#6b7280"
                     selectionColor="#3b82f6"
                 />
+                {searchParam.trim() !== "" && (
+                    <TouchableOpacity onPress={deleteQuery} className="ml-2">
+                        <Feather name="x" size={18} color="#000000ff" />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     )
