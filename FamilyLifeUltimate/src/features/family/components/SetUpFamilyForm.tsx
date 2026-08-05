@@ -10,6 +10,7 @@ export default function SetUpFamilyForm() {
     const { finishSignUp, session } = useAuth();
     const [familyId, setFamilyId] = useState<string>("");
     const [role, setRole] = useState<familyRole>("adult");
+    const [name, setName] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
 
     const submitClicked = async () => {
@@ -31,10 +32,14 @@ export default function SetUpFamilyForm() {
         setError(null);
         try {
             if (!session) return;
-            await createFamily({role: role}, session);
+            if (name.length === 0) {
+                setError("Please enter a family name to create a family.")
+                return;
+            }
+            await createFamily({ role, name }, session);
             await finishSignUp();
         } catch (e) {
-            setError(e instanceof Error ? e.message : "Failed to join family");
+            setError(e instanceof Error ? e.message : "Failed to create family");
         }
     }
 
@@ -86,6 +91,36 @@ export default function SetUpFamilyForm() {
                     Request to Join Family
                 </Text>
             </TouchableOpacity>
+
+            {/* Enter family name text */}
+            <View>
+                <Text className="text-slate-600 text-sm font-medium mb-2 ml-1 mt-2 text-center">
+                    Enter a new family name
+                </Text>
+                <TextInput
+                    className="
+                        bg-gray-100
+                        text-slate-900
+                        px-4
+                        h-14
+                        rounded-2xl
+                        text-base
+                        border
+                        border-gray-200
+                        "
+                    placeholder="e.g. The Roberts Family"
+                    placeholderTextColor="#9ca3af"
+                    value={name}
+                    onChangeText={
+                        (text) => {
+                            setName(text);
+                            setError("");
+                        }
+                    }
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                />
+            </View>
 
             {/* Create Family Button */}
             <TouchableOpacity
